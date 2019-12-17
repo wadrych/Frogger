@@ -5,9 +5,9 @@
 
 #include "UserInterface.h"
 #include "TextureManager.h"
+#include "Map.h"
 
 #include "SDL.h"
-#include "SDL_image.h"
 
 class Game
 {
@@ -24,14 +24,16 @@ public:
 
 	bool running();
 
+
+	static SDL_Renderer* renderer;
+
 private:
 	bool is_running;
 	SDL_Window* window;
-	SDL_Renderer* renderer;
-	SDL_Texture* scrtex;
-	SDL_Surface* screen;
+	SDL_Texture* screen;
 	SDL_Surface* charset;
-	SDL_Surface* eti = NULL;
+	SDL_Texture* gui_tex;
+	SDL_Texture* map_tex;
 
 	int screen_width;
 	int screen_height;
@@ -45,7 +47,6 @@ private:
 	double fps_timer;
 	double delta;
 	double fps;
-	double eti_speed;
 	double distance;
 
 	char text[128];
@@ -54,9 +55,10 @@ private:
 	int red;
 	int blue;
 
-	UserInterface* gui;
-
 	void fps_counter();
 	void calculate_time();
+	void create_gui(int gui_height);
+	void create_map(int map_height);
+	void set_renderer_conf();
 
 };

@@ -1,5 +1,10 @@
 #include "Game.h"
 
+SDL_Renderer* Game::renderer = NULL;
+
+UserInterface* gui;
+Map* map;
+
 Game::Game()
 {
 	frames = 0;
@@ -7,7 +12,6 @@ Game::Game()
 	fps = 0;
 	world_time = 0;
 	distance = 0;
-	eti_speed = 1;
 
 }
 
@@ -35,8 +39,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	else
 	{
 		printf("SDL initialized!\n");
-
-		//Create window
 		window = SDL_CreateWindow(title, xpos, ypos, screen_width, screen_height, flags);
 
 		if (window == NULL)
@@ -47,7 +49,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		else
 		{
 			printf("Window initialized!\n");
-			//Create renderer
 			renderer = SDL_CreateRenderer(window, -1, 0);
 
 			if (renderer == NULL)
@@ -60,42 +61,14 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 				printf("Renderer initialized!\n");
 				is_running = true;
 
-				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-				SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-				SDL_RenderSetLogicalSize(renderer, screen_width, screen_height);
+				set_renderer_conf();
 
-				screen = SDL_CreateRGBSurface(0, screen_width, screen_height, 32,
-					0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+				const int gui_height = 26;
 
-				scrtex = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
-					SDL_TEXTUREACCESS_STREAMING,
-					screen_width, screen_height);
+				create_map(screen_height - gui_height);
 
+				create_gui(gui_height);
 				
-
-				SDL_Surface* charset = NULL;
-				charset = SDL_LoadBMP("assets/cs8x8.bmp");
-				if (charset == NULL) {
-					printf("SDL_LoadBMP(cs8x8.bmp) error: %s\n", SDL_GetError());
-				}
-				else
-				{
-					SDL_SetColorKey(charset, true, 0x000000);
-
-					gui = new UserInterface(screen, screen_height, screen_width, charset);
-				}
-				eti = SDL_LoadBMP("assets/eti.bmp");
-				if (eti == NULL) {
-					printf("SDL_LoadBMP(eti.bmp) error: %s\n", SDL_GetError());
-				};
-
-
-				black = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
-				green = SDL_MapRGB(screen->format, 0x00, 0xFF, 0x00);
-				red = SDL_MapRGB(screen->format, 0xFF, 0x00, 0x00);
-				blue = SDL_MapRGB(screen->format, 0x11, 0x11, 0xCC);
-
-				//Cursor disabling
 				SDL_ShowCursor(SDL_DISABLE);
 
 				//Init of world time
@@ -109,15 +82,12 @@ void Game::update()
 {
 	calculate_time();
 
-	distance += eti_speed * delta;
-	SDL_FillRect(screen, NULL, blue);
-	TextureManager::draw_surface(screen, eti,
-		screen_width / 2 + sin(distance) * screen_height / 3,
-		screen_height / 2 + cos(distance) * screen_height / 3);
-
-
 	fps_counter();
-	gui->info_text(world_time, fps);
+
+	
+	SDL_DestroyTexture(gui_tex);
+	gui_tex = gui->update_info(world_time, fps);
+	
 	frames++;
 }
 
@@ -130,12 +100,15 @@ void Game::clean()
 	SDL_FreeSurface(charset);
 	charset = NULL;
 
-	SDL_FreeSurface(screen);
+	//Destroy Texture
+	SDL_DestroyTexture(screen);
 	screen = NULL;
 
-	//Destroy Texture
-	SDL_DestroyTexture(scrtex);
-	scrtex = NULL;
+	SDL_DestroyTexture(gui_tex);
+	gui_tex = NULL;
+
+	SDL_DestroyTexture(map_tex);
+	gui_tex = NULL;
 
 	//Destroy renderer
 	SDL_DestroyRenderer(renderer);
@@ -159,12 +132,11 @@ void Game::handle_evnets()
 	switch (event.type) {
 	case SDL_KEYDOWN:
 		if (event.key.keysym.sym == SDLK_ESCAPE) is_running = false;
-		else if (event.key.keysym.sym == SDLK_UP) eti_speed = 2.0;
-		else if (event.key.keysym.sym == SDLK_DOWN) eti_speed = 0.3;
+		else if (event.key.keysym.sym == SDLK_UP) ;
+		else if (event.key.keysym.sym == SDLK_DOWN) ;
 		break;
 
 	case SDL_KEYUP:
-		eti_speed = 1.0;
 		break;
 
 	case SDL_QUIT:
@@ -179,10 +151,11 @@ void Game::handle_evnets()
 
 void Game::render()
 {
-	//SDL_RenderClear(renderer);
-	SDL_UpdateTexture(scrtex, NULL, screen->pixels, screen->pitch);
-	//There we're adding stuff to renderer
-	SDL_RenderCopy(renderer, scrtex, NULL, NULL);
+	SDL_RenderClear(renderer);
+	
+	SDL_RenderCopy(renderer, map_tex, NULL, &map->get_destination_rect());
+	SDL_RenderCopy(renderer, gui_tex, NULL, &gui->get_destination_rect());
+	
 	SDL_RenderPresent(renderer);
 }
 
@@ -213,4 +186,28 @@ void Game::calculate_time()
 
 	world_time += delta;
 }
+
+void Game::create_gui(int gui_height)
+{
+	gui = new UserInterface();
+	if (!gui->init(gui_height, screen_width, screen_height))
+	{
+		printf("Couldn't load the info container");
+	}
+}
+
+void Game::create_map(int map_height)
+{
+	map = new Map;
+	map->init(screen_width, map_height);
+	map_tex = map->get_texture();
+}
+
+void Game::set_renderer_conf()
+{
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+	SDL_RenderSetLogicalSize(renderer, screen_width, screen_height);
+}
+
 

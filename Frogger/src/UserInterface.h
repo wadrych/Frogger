@@ -5,13 +5,19 @@
 class UserInterface
 {
 public:
-	UserInterface(SDL_Surface* screen, int screen_height, int screen_width, SDL_Surface* charset);
+	UserInterface();
 	~UserInterface();
 
-	void info_text(double world_time, int fps);
-
-	SDL_Surface* screen;
+	bool init(int surface_height, int surface_width, int window_hight);
+	SDL_Texture* update_info(double world_time, int fps);
+	SDL_Rect get_destination_rect();
+	
+private:
+	SDL_Texture* container;
 	SDL_Surface* charset;
-	int screen_height;
-	int screen_width;
+	SDL_Rect src_r;
+	SDL_Rect dest_r;
+	
+	int surface_height;
+	int surface_width;
 };

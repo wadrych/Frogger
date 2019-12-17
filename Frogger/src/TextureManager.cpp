@@ -1,16 +1,9 @@
 #include "TextureManager.h"
 
-SDL_Texture* TextureManager::load_texture(const char* file_name, SDL_Renderer* renderer)
+SDL_Texture* TextureManager::load_texture(const char* file_name)
 {
-	SDL_Surface* temp_surface = SDL_LoadBMP(file_name);
-	if (temp_surface == NULL)
-	{
-		printf("SDL_LoadBMP(%s) error: %s\n", file_name, SDL_GetError());
-		return NULL;
-	}
-
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, temp_surface);
-
+	SDL_Surface* temp_surface = IMG_Load(file_name);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(Game::renderer, temp_surface);
 	SDL_FreeSurface(temp_surface);
 
 	return texture;

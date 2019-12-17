@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\wojte\Documents\repos\SDL2\include;C:\Users\wojte\Documents\repos\SDL2_image\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\wojte\Documents\repos\SDL2\lib\x86;C:\Users\wojte\Documents\repos\SDL2_image\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\WORKSTATION\Documents\Repos\SDL2_image\include;C:\Users\WORKSTATION\Documents\Repos\SDL2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\WORKSTATION\Documents\Repos\SDL2_image\lib\x86;C:\Users\WORKSTATION\Documents\Repos\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\Users\wojte\Documents\repos\SDL2\include;C:\Users\wojte\Documents\repos\SDL2_image\include;$(IncludePath)</IncludePath>
@@ -140,12 +140,13 @@
   <ItemGroup>
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\TextureManager.cpp" />
     <ClCompile Include="src\UserInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game.h" />
-    <ClInclude Include="src\TextureManager.h" />
+    <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\UserInterface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
