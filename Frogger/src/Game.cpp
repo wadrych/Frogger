@@ -61,33 +61,51 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 			{
 				printf("Renderer initialized!\n");
 
-				if (!TTF_Init() == -1)
+				int imgFlags = IMG_INIT_PNG;
+				
+				if(!(IMG_Init(imgFlags) & imgFlags))
 				{
-					printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+					is_running = false;
 				}
 				else
 				{
-					font = TTF_OpenFont("../../TTF/UniversCondensed.ttf", 28);
-					if(font == NULL)
+					printf("SDL_image initialized!\n");
+					if (!TTF_Init() == -1)
 					{
-						printf("Font could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+						printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+						is_running = false;
+					}
+					else
+					{
+						printf("SDL_ttf initialized!\n");
+						font = TTF_OpenFont("../../TTF/UniversCondensed.ttf", 28);
+						if (font == NULL)
+						{
+							printf("Font could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+							is_running = false;
+						}
+						else
+						{
+							printf("Font initialized!\n");
+
+							is_running = true;
+
+							set_renderer_conf();
+
+							const int gui_height = 26;
+
+							create_map(screen_height - gui_height);
+
+							create_gui(gui_height);
+
+							SDL_ShowCursor(SDL_DISABLE);
+
+							//Init of world time
+							last_frame_time = SDL_GetTicks();
+						}
 					}
 				}
-				
-				is_running = true;
-
-				set_renderer_conf();
-
-				const int gui_height = 26;
-
-				create_map(screen_height - gui_height);
-
-				create_gui(gui_height);
-				
-				SDL_ShowCursor(SDL_DISABLE);
-
-				//Init of world time
-				last_frame_time = SDL_GetTicks();
 			}
 		}
 	}
@@ -204,10 +222,7 @@ void Game::calculate_time()
 void Game::create_gui(int gui_height)
 {
 	gui = new UserInterface;
-	if (!gui->init(gui_height, screen_width, screen_height))
-	{
-		printf("Couldn't load the info container");
-	}
+	gui->init(gui_height, screen_width, screen_height);
 }
 
 void Game::create_map(int map_height)

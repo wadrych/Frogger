@@ -32,11 +32,6 @@ SDL_Texture* Map::get_texture()
 	return texture;
 }
 
-SDL_Rect Map::get_destination_rect()
-{
-	return dest_r;
-}
-
 void Map::render()
 {
 	SDL_RenderCopy(Game::renderer, texture, NULL, &dest_r);

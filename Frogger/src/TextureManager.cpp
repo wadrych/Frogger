@@ -2,12 +2,25 @@
 
 SDL_Texture* TextureManager::load_texture(const char* file_name)
 {
-	SDL_Texture* tex;
+	SDL_Texture* tex = NULL;
 	SDL_Surface* temp_surface = IMG_Load(file_name);
 
-	tex = SDL_CreateTextureFromSurface(Game::renderer, temp_surface);
-	SDL_FreeSurface(temp_surface);
+	if (temp_surface == NULL)
+	{
+		printf("Unable to load image %s! SDL_image Error: %s\n", file_name, IMG_GetError());
+	}
+	else
+	{
+		tex = SDL_CreateTextureFromSurface(Game::renderer, temp_surface);
 
+		if (tex == NULL)
+		{
+			printf("Unable to create texture from %s! SDL Error: %s\n", file_name, SDL_GetError());
+		}
+
+		SDL_FreeSurface(temp_surface);
+	}
+	
 	return tex;
 }
 

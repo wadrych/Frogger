@@ -13,7 +13,7 @@ public:
 	UserInterface();
 	~UserInterface();
 
-	bool init(int surface_height, int surface_width, int window_hight);
+	void init(int surface_height, int surface_width, int window_hight);
 	void update_info(double world_time, int fps);
 	void render();
 	SDL_Texture* get_texture();
