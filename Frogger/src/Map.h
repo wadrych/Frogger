@@ -9,9 +9,11 @@ public:
 	Map();
 	~Map();
 
-	void init(int width, int height);
+	bool init(int width, int height);
+	void render();
 	SDL_Texture* get_texture();
 	SDL_Rect get_destination_rect();
+	
 private:
 	SDL_Texture* texture;
 	SDL_Rect src_r;

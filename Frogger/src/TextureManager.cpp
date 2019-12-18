@@ -2,8 +2,15 @@
 
 SDL_Texture* TextureManager::load_texture(const char* file_name)
 {
-	
+	SDL_Texture* tex;
+	SDL_Surface* temp_surface = IMG_Load(file_name);
+
+	tex = SDL_CreateTextureFromSurface(Game::renderer, temp_surface);
+	SDL_FreeSurface(temp_surface);
+
+	return tex;
 }
+
 
 void TextureManager::draw_pixel(SDL_Surface* surface, int x, int y, Uint32 color)
 {
@@ -30,41 +37,4 @@ void TextureManager::draw_rectangle(SDL_Surface* screen, int x, int y, int l, in
 	draw_line(screen, x, y + k - 1, l, 1, 0, outlineColor);
 	for (i = y + 1; i < y + k - 1; i++)
 		draw_line(screen, x + 1, i, l - 2, 1, 0, fillColor);
-}
-
-void TextureManager::draw_string(SDL_Surface* screen, int x, int y, const char* text, SDL_Surface* charset)
-{
-	int px, py, c;
-	SDL_Rect s, d;
-	s.w = 8;
-	s.h = 8;
-	d.w = 8;
-	d.h = 8;
-
-	while (*text) {
-		c = *text & 255;
-		px = (c % 16) * 8;
-		py = (c / 16) * 8;
-		s.x = px;
-		s.y = py;
-		d.x = x;
-		d.y = y;
-		SDL_BlitSurface(charset, &s, screen, &d);
-		x += 8;
-		text++;
-	}
-}
-
-void TextureManager::draw_surface(SDL_Surface* screen, SDL_Surface* sprite, int x, int y) {
-	SDL_Rect dest;
-	dest.x = x - sprite->w / 2;
-	dest.y = y - sprite->h / 2;
-	dest.w = sprite->w;
-	dest.h = sprite->h;
-	SDL_BlitSurface(sprite, NULL, screen, &dest);
-};
-
-SDL_Texture* TextureManager::get_texture()
-{
-	return tex;
 }

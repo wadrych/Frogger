@@ -1,6 +1,7 @@
 #include "Game.h"
 
 SDL_Renderer* Game::renderer = NULL;
+TTF_Font* Game::font = NULL;
 
 UserInterface* gui;
 Map* map;
@@ -59,6 +60,20 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 			else
 			{
 				printf("Renderer initialized!\n");
+
+				if (!TTF_Init() == -1)
+				{
+					printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+				}
+				else
+				{
+					font = TTF_OpenFont("../../TTF/UniversCondensed.ttf", 28);
+					if(font == NULL)
+					{
+						printf("Font could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+					}
+				}
+				
 				is_running = true;
 
 				set_renderer_conf();
@@ -84,18 +99,13 @@ void Game::update()
 
 	fps_counter();
 
-	
-	SDL_DestroyTexture(gui_tex);
-	gui_tex = gui->update_info(world_time, fps);
+	gui->update_info(world_time, fps);
 	
 	frames++;
 }
 
 void Game::clean()
 {
-	//Delete graphics interface
-	delete gui;
-
 	//Deallocate all surfaces
 	SDL_FreeSurface(charset);
 	charset = NULL;
@@ -104,11 +114,11 @@ void Game::clean()
 	SDL_DestroyTexture(screen);
 	screen = NULL;
 
-	SDL_DestroyTexture(gui_tex);
-	gui_tex = NULL;
+	SDL_DestroyTexture(gui->get_texture());
+	
+	SDL_DestroyTexture(gui->get_texture_text());
 
-	SDL_DestroyTexture(map_tex);
-	gui_tex = NULL;
+	SDL_DestroyTexture(map->get_texture());
 
 	//Destroy renderer
 	SDL_DestroyRenderer(renderer);
@@ -117,6 +127,10 @@ void Game::clean()
 	//Destroy window
 	SDL_DestroyWindow(window);
 	window = NULL;
+	
+	//Delete objects
+	delete gui;
+	delete map;
 
 	//Quit SDL subsystems
 	SDL_Quit();
@@ -153,8 +167,8 @@ void Game::render()
 {
 	SDL_RenderClear(renderer);
 	
-	SDL_RenderCopy(renderer, map_tex, NULL, &map->get_destination_rect());
-	SDL_RenderCopy(renderer, gui_tex, NULL, &gui->get_destination_rect());
+	map->render();
+	gui->render();
 	
 	SDL_RenderPresent(renderer);
 }
@@ -189,7 +203,7 @@ void Game::calculate_time()
 
 void Game::create_gui(int gui_height)
 {
-	gui = new UserInterface();
+	gui = new UserInterface;
 	if (!gui->init(gui_height, screen_width, screen_height))
 	{
 		printf("Couldn't load the info container");
@@ -199,8 +213,11 @@ void Game::create_gui(int gui_height)
 void Game::create_map(int map_height)
 {
 	map = new Map;
-	map->init(screen_width, map_height);
-	map_tex = map->get_texture();
+	if(!
+		map->init(screen_width, map_height))
+	{
+		printf("Couldn't load the map");
+	}
 }
 
 void Game::set_renderer_conf()

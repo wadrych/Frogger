@@ -8,6 +8,12 @@
 #include "Map.h"
 
 #include "SDL.h"
+#include "SDL_image.h"
+#include "SDL_ttf.h"
+#include <stdio.h>
+#include <string>
+#include <cmath>
+
 
 class Game
 {
@@ -26,14 +32,13 @@ public:
 
 
 	static SDL_Renderer* renderer;
+	static TTF_Font* font;
 
 private:
 	bool is_running;
 	SDL_Window* window;
 	SDL_Texture* screen;
 	SDL_Surface* charset;
-	SDL_Texture* gui_tex;
-	SDL_Texture* map_tex;
 
 	int screen_width;
 	int screen_height;
