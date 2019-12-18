@@ -2,11 +2,7 @@
 
 SDL_Texture* TextureManager::load_texture(const char* file_name)
 {
-	SDL_Surface* temp_surface = IMG_Load(file_name);
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(Game::renderer, temp_surface);
-	SDL_FreeSurface(temp_surface);
-
-	return texture;
+	
 }
 
 void TextureManager::draw_pixel(SDL_Surface* surface, int x, int y, Uint32 color)
@@ -67,3 +63,8 @@ void TextureManager::draw_surface(SDL_Surface* screen, SDL_Surface* sprite, int 
 	dest.h = sprite->h;
 	SDL_BlitSurface(sprite, NULL, screen, &dest);
 };
+
+SDL_Texture* TextureManager::get_texture()
+{
+	return tex;
+}

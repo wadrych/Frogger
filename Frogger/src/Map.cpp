@@ -15,7 +15,7 @@ void Map::init(int dest_width, int dest_height)
 	dest_r.x = 0;
 	dest_r.y = 0;
 
-	texture = TextureManager::load_texture("assets/map.png");
+	texture = TextureLoader::load_texture("assets/map.png");
 }
 
 SDL_Texture* Map::get_texture()
