@@ -6,8 +6,9 @@
 #include "Game.h"
 #include "SDL.h"
 
-#define SCREEN_WIDTH	639
-#define SCREEN_HEIGHT	640 
+#define SCREEN_WIDTH	448
+#define SCREEN_HEIGHT	442
+#define GUI_HEIGHT	    26
 
 #ifdef __cplusplus
 extern "C"
@@ -23,9 +24,9 @@ int main(int argc, char** argv)
 	Uint32 frame_start;
 	int frame_time;
 
-	Game* game = new Game;
+	Game* game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT, GUI_HEIGHT);
 
-	game->init(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, fullscreen);
+	game->init(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, fullscreen);
 
 
 	while (game->running())

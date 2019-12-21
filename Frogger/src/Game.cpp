@@ -1,31 +1,28 @@
 #include "Game.h"
 
-SDL_Renderer* Game::renderer = NULL;
-TTF_Font* Game::font = NULL;
+SDL_Renderer* Global::renderer = NULL;
+TTF_Font* Global::font = NULL;
 
 UserInterface* gui;
 Map* map;
+Player* player;
+Car* car_1[5];
 
-Game::Game()
+Game::Game(int width, int height, int gui_h) : screen_width( width ), screen_height( height ), gui_height( gui_h )
 {
 	frames = 0;
 	fps_timer = 0;
 	fps = 0;
 	world_time = 0;
 	distance = 0;
-
 }
 
 Game::~Game()
 {
-
 }
 
-void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
+void Game::init(const char* title, int xpos, int ypos, bool fullscreen)
 {
-	screen_width = width;
-	screen_height = height;
-
 	int flags = 0;
 	if (fullscreen)
 	{
@@ -50,9 +47,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		else
 		{
 			printf("Window initialized!\n");
-			renderer = SDL_CreateRenderer(window, -1, 0);
+			Global::renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-			if (renderer == NULL)
+			if (Global::renderer == NULL)
 			{
 				printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
 				is_running = false;
@@ -71,7 +68,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 				else
 				{
 					printf("SDL_image initialized!\n");
-					if (!TTF_Init() == -1)
+					if (TTF_Init() == -1)
 					{
 						printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
 						is_running = false;
@@ -79,8 +76,8 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 					else
 					{
 						printf("SDL_ttf initialized!\n");
-						font = TTF_OpenFont("../../TTF/UniversCondensed.ttf", 28);
-						if (font == NULL)
+						Global::font = TTF_OpenFont("../../TTF/UniversCondensed.ttf", 28);
+						if (Global::font == NULL)
 						{
 							printf("Font could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
 							is_running = false;
@@ -88,17 +85,20 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 						else
 						{
 							printf("Font initialized!\n");
-
 							is_running = true;
 
 							set_renderer_conf();
 
-							const int gui_height = 26;
-
 							create_map(screen_height - gui_height);
 
 							create_gui(gui_height);
-
+							
+							player = new Player("assets/frog.png", 224 ,384);
+							car_1[0] = new Car("assets/car_1.png", 0, 352, 5, screen_width);
+							car_1[1] = new Car("assets/car_1.png", screen_width /2 , 352, 5, screen_width);
+							car_1[2] = new Car("assets/car_1.png", screen_width, 352, 5, screen_width);
+							car_1[3] = new Car("assets/car_1.png", -screen_width / 2, 352, 5, screen_width);
+							car_1[4] = new Car("assets/car_1.png", -screen_width, 352, 5, screen_width);
 							SDL_ShowCursor(SDL_DISABLE);
 
 							//Init of world time
@@ -115,11 +115,39 @@ void Game::update()
 {
 	calculate_time();
 
-	fps_counter();
+	player->update();
 
+	for(int i =0;i<5;i++)
+	{
+		car_1[i]->update((int)world_time);
+	}
+
+	if(EventHandler::check_collisions(player, car_1))
+	{
+		player->update_x(224);
+		player->update_y(384);
+	}
+	
+	fps_counter();
 	gui->update_info(world_time, fps);
 	
 	frames++;
+}
+
+void Game::render()
+{
+	SDL_RenderClear(Global::renderer);
+
+	map->render();
+	gui->render();
+	
+	for (int i = 0; i < 5; i++)
+	{
+		car_1[i]->render();
+	}
+	player->render();
+
+	SDL_RenderPresent(Global::renderer);
 }
 
 void Game::clean()
@@ -137,10 +165,17 @@ void Game::clean()
 	SDL_DestroyTexture(gui->get_texture_text());
 
 	SDL_DestroyTexture(map->get_texture());
+	
+	SDL_DestroyTexture(player->get_texture());
+
+	for (int i = 0; i < 5; i++)
+	{
+		SDL_DestroyTexture(car_1[i]->get_texture());
+	}
 
 	//Destroy renderer
-	SDL_DestroyRenderer(renderer);
-	renderer = NULL;
+	SDL_DestroyRenderer(Global::renderer);
+	Global::renderer = NULL;
 
 	//Destroy window
 	SDL_DestroyWindow(window);
@@ -149,6 +184,11 @@ void Game::clean()
 	//Delete objects
 	delete gui;
 	delete map;
+	delete player;
+	for (int i = 0; i < 5; i++)
+	{
+		delete car_1[i];
+	}
 
 	//Quit SDL subsystems
 	SDL_Quit();
@@ -164,8 +204,10 @@ void Game::handle_evnets()
 	switch (event.type) {
 	case SDL_KEYDOWN:
 		if (event.key.keysym.sym == SDLK_ESCAPE) is_running = false;
-		else if (event.key.keysym.sym == SDLK_UP) ;
-		else if (event.key.keysym.sym == SDLK_DOWN) ;
+		else if (event.key.keysym.sym == SDLK_UP) EventHandler::move_up(player, map);
+		else if (event.key.keysym.sym == SDLK_DOWN) EventHandler::move_down(player, map);
+		else if (event.key.keysym.sym == SDLK_LEFT) EventHandler::move_left(player, map);
+		else if (event.key.keysym.sym == SDLK_RIGHT) EventHandler::move_right(player, map);
 		break;
 
 	case SDL_KEYUP:
@@ -179,16 +221,6 @@ void Game::handle_evnets()
 		break;
 	};
 
-}
-
-void Game::render()
-{
-	SDL_RenderClear(renderer);
-	
-	map->render();
-	gui->render();
-	
-	SDL_RenderPresent(renderer);
 }
 
 bool Game::running()
@@ -228,18 +260,14 @@ void Game::create_gui(int gui_height)
 void Game::create_map(int map_height)
 {
 	map = new Map;
-	if(!
-		map->init(screen_width, map_height))
-	{
-		printf("Couldn't load the map");
-	}
+	map->init(screen_width, map_height);
 }
 
 void Game::set_renderer_conf()
 {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(Global::renderer, 0, 0, 0, 255);
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-	SDL_RenderSetLogicalSize(renderer, screen_width, screen_height);
+	SDL_RenderSetLogicalSize(Global::renderer, screen_width, screen_height);
 }
 
 

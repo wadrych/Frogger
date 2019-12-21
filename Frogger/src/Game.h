@@ -2,26 +2,22 @@
 
 #include <stdio.h>
 #include <string.h>
-
-#include "UserInterface.h"
-#include "TextureManager.h"
-#include "Map.h"
-
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
-#include <stdio.h>
-#include <string>
 #include <cmath>
 
+#include "Global.h"
+#include "UserInterface.h"
+#include "Map.h"
+#include "Player.h"
+#include "Car.h"
+#include "EventHandler.h"
 
 class Game
 {
 public:
-	Game();
+	Game(int width, int height, int gui_h);
 	~Game();
 
-	void init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen);
+	void init(const char* title, int xpos, int ypos, bool fullscreen);
 
 	void handle_evnets();
 	void update();
@@ -30,18 +26,15 @@ public:
 
 	bool running();
 
-
-	static SDL_Renderer* renderer;
-	static TTF_Font* font;
-
 private:
 	bool is_running;
 	SDL_Window* window;
 	SDL_Texture* screen;
 	SDL_Surface* charset;
 
-	int screen_width;
-	int screen_height;
+	const int screen_width;
+	const int screen_height;
+	const int gui_height;
 
 	Uint32 last_frame_time;
 	Uint32 current_frame_time;

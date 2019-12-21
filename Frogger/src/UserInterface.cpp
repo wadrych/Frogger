@@ -26,7 +26,7 @@ void UserInterface::init(int surface_height, int surface_width, int window_hight
 }
 
 
-void  UserInterface::update_info(double world_time, int fps)
+void  UserInterface::update_info(double world_time, double fps)
 {
 	SDL_DestroyTexture(container);
 	SDL_DestroyTexture(text_container);
@@ -45,8 +45,8 @@ void  UserInterface::update_info(double world_time, int fps)
 
 		TextureManager::draw_rectangle(temp_surface, 0, 0, surface_width, surface_height, line_color, container_color);
 
-		sprintf(text, "Czas trwania = %.1lf s  %.0ld klatek / s", world_time, fps);
-		SDL_Surface* text_surface = TTF_RenderText_Solid(Game::font, text, { 255,255,255 });
+		sprintf(text, "Czas trwania = %.1lf s  %.0lf klatek / s", world_time, fps);
+		SDL_Surface* text_surface = TTF_RenderText_Solid(Global::font, text, { 255,255,255 });
 
 		if (text_surface == NULL)
 		{
@@ -54,8 +54,8 @@ void  UserInterface::update_info(double world_time, int fps)
 		}
 		else
 		{
-			container = SDL_CreateTextureFromSurface(Game::renderer, temp_surface);
-			text_container = SDL_CreateTextureFromSurface(Game::renderer, text_surface);
+			container = SDL_CreateTextureFromSurface(Global::renderer, temp_surface);
+			text_container = SDL_CreateTextureFromSurface(Global::renderer, text_surface);
 			if(container  == NULL || text_container == NULL)
 			{
 				printf("Unable to create gui textures ! SDL Error: %s\n", SDL_GetError());
@@ -73,8 +73,8 @@ SDL_Texture* UserInterface::get_texture()
 
 void UserInterface::render()
 {
-	SDL_RenderCopy(Game::renderer, container, NULL, &dest_r);
-	SDL_RenderCopy(Game::renderer, text_container, NULL, &dest_r_text);
+	SDL_RenderCopy(Global::renderer, container, NULL, &dest_r);
+	SDL_RenderCopy(Global::renderer, text_container, NULL, &dest_r_text);
 }
 
 SDL_Texture* UserInterface::get_texture_text()

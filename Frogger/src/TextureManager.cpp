@@ -11,7 +11,7 @@ SDL_Texture* TextureManager::load_texture(const char* file_name)
 	}
 	else
 	{
-		tex = SDL_CreateTextureFromSurface(Game::renderer, temp_surface);
+		tex = SDL_CreateTextureFromSurface(Global::renderer, temp_surface);
 
 		if (tex == NULL)
 		{
