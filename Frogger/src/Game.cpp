@@ -6,7 +6,7 @@ TTF_Font* Global::font = NULL;
 UserInterface* gui;
 Map* map;
 Player* player;
-Car* cars[13];
+Car* cars[14];
 
 Game::Game()
 {
@@ -123,7 +123,13 @@ void Game::update()
 		cars[i]->update((int)world_time);
 	}
 
-	if(CollisonDetector::check_collisions(player, cars, cars_amt))
+	if(CollisonDetector::check_collisions_car(player, cars, cars_amt))
+	{
+		//player->set_x(player_s->x);
+		//player->set_y(player_s->y);
+	}
+
+	if(CollisonDetector::check_collision_border(player))
 	{
 		player->set_x(player_s->x);
 		player->set_y(player_s->y);
@@ -253,14 +259,14 @@ void Game::calculate_time()
 void Game::create_gui()
 {
 	gui = new UserInterface;
-	gui->init(GUI_HEIGHT, SCREEN_HEIGHT, SCREEN_HEIGHT);
+	gui->init(GUI_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 void Game::create_map()
 {
 	int map_height = SCREEN_HEIGHT - GUI_HEIGHT;
 	map = new Map;
-	map->init(SCREEN_HEIGHT, map_height);
+	map->init(SCREEN_WIDTH, map_height);
 }
 
 void Game::set_renderer_conf()
