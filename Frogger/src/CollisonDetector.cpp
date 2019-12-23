@@ -41,4 +41,17 @@ bool CollisonDetector::check_collision(SDL_Rect a, SDL_Rect b)
 	return true;
 }
 
+bool CollisonDetector::check_collisions(Player* p, Car* cars[], int cars_amt)
+{
+	for (int i = 0; i < cars_amt; i++)
+	{
+		if (CollisonDetector::check_collision(p->get_dest_rect(), cars[i]->get_dest_rect()))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
 

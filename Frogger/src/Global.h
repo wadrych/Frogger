@@ -4,6 +4,12 @@
 #include "SDL_ttf.h"
 #include "SDL_image.h"
 
+#define SCREEN_WIDTH 448
+#define	SCREEN_HEIGHT 442
+#define GUI_HEIGHT 26
+#define X_CHUNKS 14
+#define Y_CHUNKS 13
+
 class Global
 {
 public:

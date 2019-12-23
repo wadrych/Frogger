@@ -1,11 +1,18 @@
 #include "GameObject.h"
 
-GameObject::GameObject(const char* path, int x, int y)
+GameObject::GameObject(game_object* rect)
 {
-	sprite = TextureManager::load_texture(path);
+	sprite = TextureManager::load_texture(rect->path);
 
-	pos_x = x;
-	pos_y = y;
+	pos_x = rect->x;
+	pos_y = rect->y;
+
+	src_r.w = rect->w;
+	src_r.h = rect->h;
+	src_r.x = 0;
+	src_r.y = 0;
+	dest_r.w = rect->w / (SCREEN_WIDTH / X_CHUNKS) * (SCREEN_WIDTH / X_CHUNKS);
+	dest_r.h = (SCREEN_HEIGHT - GUI_HEIGHT) / Y_CHUNKS;
 }
 
 GameObject::~GameObject()
@@ -19,13 +26,6 @@ void GameObject::render()
 
 void GameObject::update()
 {
-	src_r.w = 32;
-	src_r.h = 32;
-	src_r.x = 0;
-	src_r.y = 0;
-
-	dest_r.w = 32;
-	dest_r.h = 32;
 	dest_r.x = pos_x;
 	dest_r.y = pos_y;
 }
@@ -35,12 +35,12 @@ SDL_Texture* GameObject::get_texture()
 	return sprite;
 }
 
-void GameObject::update_x(int x)
+void GameObject::set_x(int x)
 {
 	pos_x = x;
 }
 
-void GameObject::update_y(int y)
+void GameObject::set_y(int y)
 {
 	pos_y = y;
 }

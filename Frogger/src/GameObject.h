@@ -3,16 +3,24 @@
 #include "Global.h"
 #include "TextureManager.h"
 
+typedef struct game_object
+{
+	int x, y;
+	int w, h;
+	const char* path;
+	int v;
+} game_object;
+
 class GameObject
 {
 public:
-	GameObject(const char* path, int x, int y);
+	GameObject(game_object* rect);
 	~GameObject();
 
 	void render();
 	void update();
-	void update_x(int x_distance);
-	void update_y(int y_distance);
+	void set_x(int x);
+	void set_y(int y);
 
 	int get_x();
 	int get_y();

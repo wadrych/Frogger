@@ -12,5 +12,4 @@ public:
 	static void move_left(Player* p, Map* m);
 	static void move_down(Player* p, Map* m);
 	static void move_up(Player* p, Map* m);
-	static bool check_collisions(Player* p, Car* car_1[]);
 };

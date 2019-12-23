@@ -5,7 +5,7 @@
 class Car : public GameObject
 {
 public:
-	Car(const char* path, int x, int y, int v, int screen_width);
+	Car(game_object* rect);
 	~Car();
 	
 	void update(double time);

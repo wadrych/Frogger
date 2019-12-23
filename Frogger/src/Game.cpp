@@ -6,15 +6,15 @@ TTF_Font* Global::font = NULL;
 UserInterface* gui;
 Map* map;
 Player* player;
-Car* car_1[5];
+Car* cars[13];
 
-Game::Game(int width, int height, int gui_h) : screen_width( width ), screen_height( height ), gui_height( gui_h )
+Game::Game()
 {
 	frames = 0;
 	fps_timer = 0;
 	fps = 0;
 	world_time = 0;
-	distance = 0;
+	cars_amt = 0;
 }
 
 Game::~Game()
@@ -37,7 +37,7 @@ void Game::init(const char* title, int xpos, int ypos, bool fullscreen)
 	else
 	{
 		printf("SDL initialized!\n");
-		window = SDL_CreateWindow(title, xpos, ypos, screen_width, screen_height, flags);
+		window = SDL_CreateWindow(title, xpos, ypos, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
 
 		if (window == NULL)
 		{
@@ -89,16 +89,17 @@ void Game::init(const char* title, int xpos, int ypos, bool fullscreen)
 
 							set_renderer_conf();
 
-							create_map(screen_height - gui_height);
+							create_map();
 
-							create_gui(gui_height);
+							create_gui();
+
+							//loads initialization structs
+							load_structs();
+
+							create_player();
+
+							create_cars();
 							
-							player = new Player("assets/frog.png", 224 ,384);
-							car_1[0] = new Car("assets/car_1.png", 0, 352, 5, screen_width);
-							car_1[1] = new Car("assets/car_1.png", screen_width /2 , 352, 5, screen_width);
-							car_1[2] = new Car("assets/car_1.png", screen_width, 352, 5, screen_width);
-							car_1[3] = new Car("assets/car_1.png", -screen_width / 2, 352, 5, screen_width);
-							car_1[4] = new Car("assets/car_1.png", -screen_width, 352, 5, screen_width);
 							SDL_ShowCursor(SDL_DISABLE);
 
 							//Init of world time
@@ -117,15 +118,15 @@ void Game::update()
 
 	player->update();
 
-	for(int i =0;i<5;i++)
+	for(int i =0; i < cars_amt; i++)
 	{
-		car_1[i]->update((int)world_time);
+		cars[i]->update((int)world_time);
 	}
 
-	if(EventHandler::check_collisions(player, car_1))
+	if(CollisonDetector::check_collisions(player, cars, cars_amt))
 	{
-		player->update_x(224);
-		player->update_y(384);
+		player->set_x(player_s->x);
+		player->set_y(player_s->y);
 	}
 	
 	fps_counter();
@@ -141,9 +142,9 @@ void Game::render()
 	map->render();
 	gui->render();
 	
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < cars_amt; i++)
 	{
-		car_1[i]->render();
+		cars[i]->render();
 	}
 	player->render();
 
@@ -152,10 +153,6 @@ void Game::render()
 
 void Game::clean()
 {
-	//Deallocate all surfaces
-	SDL_FreeSurface(charset);
-	charset = NULL;
-
 	//Destroy Texture
 	SDL_DestroyTexture(screen);
 	screen = NULL;
@@ -168,9 +165,9 @@ void Game::clean()
 	
 	SDL_DestroyTexture(player->get_texture());
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < cars_amt; i++)
 	{
-		SDL_DestroyTexture(car_1[i]->get_texture());
+		SDL_DestroyTexture(cars[i]->get_texture());
 	}
 
 	//Destroy renderer
@@ -182,12 +179,14 @@ void Game::clean()
 	window = NULL;
 	
 	//Delete objects
+	free_structs();
+	
 	delete gui;
 	delete map;
 	delete player;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < cars_amt; i++)
 	{
-		delete car_1[i];
+		delete cars[i];
 	}
 
 	//Quit SDL subsystems
@@ -251,23 +250,64 @@ void Game::calculate_time()
 	world_time += delta;
 }
 
-void Game::create_gui(int gui_height)
+void Game::create_gui()
 {
 	gui = new UserInterface;
-	gui->init(gui_height, screen_width, screen_height);
+	gui->init(GUI_HEIGHT, SCREEN_HEIGHT, SCREEN_HEIGHT);
 }
 
-void Game::create_map(int map_height)
+void Game::create_map()
 {
+	int map_height = SCREEN_HEIGHT - GUI_HEIGHT;
 	map = new Map;
-	map->init(screen_width, map_height);
+	map->init(SCREEN_HEIGHT, map_height);
 }
 
 void Game::set_renderer_conf()
 {
 	SDL_SetRenderDrawColor(Global::renderer, 0, 0, 0, 255);
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-	SDL_RenderSetLogicalSize(Global::renderer, screen_width, screen_height);
+	SDL_RenderSetLogicalSize(Global::renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
+void Game::create_cars()
+{
+	for (int i = 0; i < cars_amt; i++)
+	{
+		cars[i] = new Car(&cars_s[i]);
+	}
+}
 
+void Game::load_structs()
+{
+	player_s = (game_object*)malloc(sizeof(game_object));
+	*player_s = { 224 , 384, 32, 32,  "assets/frog.png", 0};
+
+	cars_amt = 13;
+	cars_s = (game_object*)malloc(cars_amt * sizeof(game_object));
+	cars_s[0] = { 0, 352, 32, 32, "assets/car_1.png", -3 };
+	cars_s[1] = { SCREEN_WIDTH / 2, 352, 32, 32, "assets/car_1.png", -3 };
+	cars_s[2] = { SCREEN_WIDTH, 352, 32, 32, "assets/car_1.png", -3 };
+	cars_s[3] = { SCREEN_WIDTH * 3 / 2, 352, 32, 32, "assets/car_1.png", -3 };
+	cars_s[4] = { SCREEN_WIDTH, 224, 64, 32, "assets/car_1.png", 1 };
+	cars_s[5] = { 0, 320, 32, 32, "assets/car_1.png", -1 }; 
+	cars_s[6] = { SCREEN_WIDTH * 2 / 3, 320, 32, 32, "assets/car_1.png", -1 };
+	cars_s[7] = { SCREEN_WIDTH * 2 * 2 / 3, 320, 32, 32, "assets/car_1.png", -1 };
+	cars_s[8] = { SCREEN_WIDTH / 2, 288, 32, 32, "assets/car_1.png", 2 };
+	cars_s[9] = { SCREEN_WIDTH, 288, 32, 32, "assets/car_1.png", 2 };
+	cars_s[10] = { SCREEN_WIDTH * 3 / 2, 288, 32, 32, "assets/car_1.png", 2 };
+	cars_s[11] = { SCREEN_WIDTH, 256, 32, 32, "assets/car_1.png", -8 };
+	cars_s[12] = { 0, 224, 64, 32, "assets/car_1.png", 1 };
+	
+}
+
+void Game::create_player()
+{
+	player = new Player(player_s);
+}
+
+void Game::free_structs()
+{
+	free(player_s);
+	free(cars_s);
+}
