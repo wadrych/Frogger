@@ -283,7 +283,7 @@ void Game::load_structs()
 	player_s = (game_object*)malloc(sizeof(game_object));
 	*player_s = { 224 , 384, 32, 32,  "assets/frog.png", 0};
 
-	cars_amt = 13;
+	cars_amt = 14;
 	cars_s = (game_object*)malloc(cars_amt * sizeof(game_object));
 	cars_s[0] = { 0, 352, 32, 32, "assets/car_1.png", -3 };
 	cars_s[1] = { SCREEN_WIDTH / 2, 352, 32, 32, "assets/car_1.png", -3 };
@@ -296,8 +296,9 @@ void Game::load_structs()
 	cars_s[8] = { SCREEN_WIDTH / 2, 288, 32, 32, "assets/car_1.png", 2 };
 	cars_s[9] = { SCREEN_WIDTH, 288, 32, 32, "assets/car_1.png", 2 };
 	cars_s[10] = { SCREEN_WIDTH * 3 / 2, 288, 32, 32, "assets/car_1.png", 2 };
-	cars_s[11] = { SCREEN_WIDTH, 256, 32, 32, "assets/car_1.png", -8 };
-	cars_s[12] = { 0, 224, 64, 32, "assets/car_1.png", 1 };
+	cars_s[11] = { SCREEN_WIDTH * 0, 288, 32, 32, "assets/car_1.png", 2 };
+	cars_s[12] = { SCREEN_WIDTH, 256, 32, 32, "assets/car_1.png", -8 };
+	cars_s[13] = { 0, 224, 64, 32, "assets/car_1.png", 1 };
 	
 }
 
