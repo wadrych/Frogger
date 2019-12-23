@@ -6,7 +6,8 @@ TTF_Font* Global::font = NULL;
 UserInterface* gui;
 Map* map;
 Player* player;
-Car* cars[14];
+Car** cars;
+Log** logs;
 
 Game::Game()
 {
@@ -99,6 +100,8 @@ void Game::init(const char* title, int xpos, int ypos, bool fullscreen)
 							create_player();
 
 							create_cars();
+
+							create_logs();
 							
 							SDL_ShowCursor(SDL_DISABLE);
 
@@ -120,7 +123,12 @@ void Game::update()
 
 	for(int i =0; i < cars_amt; i++)
 	{
-		cars[i]->update((int)world_time);
+		cars[i]->update();
+	}
+
+	for (int i = 0; i < logs_amt; i++)
+	{
+		logs[i]->update();
 	}
 
 	if(CollisonDetector::check_collisions_car(player, cars, cars_amt))
@@ -134,6 +142,9 @@ void Game::update()
 		player->set_x(player_s->x);
 		player->set_y(player_s->y);
 	}
+
+	CollisonDetector::check_collisions_logs(player, logs, logs_amt);
+	
 	
 	fps_counter();
 	gui->update_info(world_time, fps);
@@ -151,6 +162,10 @@ void Game::render()
 	for (int i = 0; i < cars_amt; i++)
 	{
 		cars[i]->render();
+	}
+	for (int i = 0; i < logs_amt; i++)
+	{
+		logs[i]->render();
 	}
 	player->render();
 
@@ -175,6 +190,10 @@ void Game::clean()
 	{
 		SDL_DestroyTexture(cars[i]->get_texture());
 	}
+	for (int i = 0; i < logs_amt; i++)
+	{
+		SDL_DestroyTexture(logs[i]->get_texture());
+	}
 
 	//Destroy renderer
 	SDL_DestroyRenderer(Global::renderer);
@@ -193,6 +212,10 @@ void Game::clean()
 	for (int i = 0; i < cars_amt; i++)
 	{
 		delete cars[i];
+	}
+	for (int i = 0; i < logs_amt; i++)
+	{
+		delete logs[i];
 	}
 
 	//Quit SDL subsystems
@@ -278,6 +301,8 @@ void Game::set_renderer_conf()
 
 void Game::create_cars()
 {
+	cars = (Car**)malloc(cars_amt * sizeof(Car*));
+	
 	for (int i = 0; i < cars_amt; i++)
 	{
 		cars[i] = new Car(&cars_s[i]);
@@ -305,6 +330,19 @@ void Game::load_structs()
 	cars_s[11] = { SCREEN_WIDTH * 0, 288, 32, 32, "assets/car_1.png", 2 };
 	cars_s[12] = { SCREEN_WIDTH, 256, 32, 32, "assets/car_1.png", -8 };
 	cars_s[13] = { 0, 224, 64, 32, "assets/car_1.png", 1 };
+
+	logs_amt = 7;
+	logs_s = (game_object*)malloc(logs_amt * sizeof(game_object));
+	logs_s[0] = { 0, 32 * 5, 96,32,"assets/log.png", 5 };
+	logs_s[1] = { SCREEN_WIDTH * 0, 32 * 4, 96,32,"assets/log.png", 1 };
+	logs_s[2] = { SCREEN_WIDTH * 1 / 2, 32 * 4, 96,32,"assets/log.png", 1 };
+	logs_s[3] = { SCREEN_WIDTH * 1 / 1, 32 * 4, 96,32,"assets/log.png", 1 };
+	logs_s[4] = { SCREEN_WIDTH * 3 / 2, 32 * 4, 96,32,"assets/log.png", 1 };
+	logs_s[5] = { SCREEN_WIDTH * (-1) / 2, 32 * 4, 96,32,"assets/log.png", 1 };
+	logs_s[6] = { 0, 32 * 3, 96,32,"assets/log.png", -5 };
+
+
+
 	
 }
 
@@ -317,4 +355,15 @@ void Game::free_structs()
 {
 	free(player_s);
 	free(cars_s);
+	free(logs_s);
+}
+
+void Game::create_logs()
+{
+	logs = (Log**)malloc(logs_amt * sizeof(Log*));
+	
+	for (int i = 0; i < logs_amt; i++)
+	{
+		logs[i] = new Log(&logs_s[i]);
+	}
 }

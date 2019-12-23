@@ -95,6 +95,19 @@ bool CollisonDetector::check_collision_border(Player* p)
 	
 }
 
-
-
+bool CollisonDetector::check_collisions_logs(Player* p, Log* logs[], int logs_amt)
+{
+	SDL_Rect temp;
+	for (int i = 0; i < logs_amt; i++)
+	{
+		temp = logs[i]->get_dest_rect();
+		temp.w = temp.w - (SCREEN_WIDTH / X_CHUNKS); 
+		if (CollisonDetector::check_collision(p->get_dest_rect(), temp))
+		{
+			p->set_x(p->get_x() + logs[i]->get_velocity());
+			return true;
+		}
+	}
+	return false;
+}
 

@@ -10,7 +10,7 @@ Car::~Car()
 {
 }
 
-void Car::update(double time)
+void Car::update()
 {
 	int distance = get_x() + velocity;
 	if( distance > street)

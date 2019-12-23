@@ -9,6 +9,7 @@
 #include "Map.h"
 #include "Player.h"
 #include "Car.h"
+#include "Log.h"
 #include "EventHandler.h"
 
 class Game
@@ -43,8 +44,10 @@ private:
 
 	game_object* player_s;
 	game_object* cars_s;
+	game_object* logs_s;
 
 	int cars_amt;
+	int logs_amt;
 
 	void fps_counter();
 	void calculate_time();
@@ -55,4 +58,5 @@ private:
 	void free_structs();
 	void create_player();
 	void create_cars();
+	void create_logs();
 };
