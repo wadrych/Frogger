@@ -118,6 +118,8 @@ bool CollisonDetector::check_collisions_logs(Player* p, Log* logs[], int logs_am
 		{
 			p->set_x(p->get_x() + logs[i]->get_velocity());
 			p->set_is_above_water(true);
+
+			printf("is on log\n");
 			return true;
 		}
 	}

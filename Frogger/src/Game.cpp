@@ -119,25 +119,7 @@ void Game::update()
 {
 	calculate_time();
 
-	CollisonDetector::check_collisions_logs(player, logs, logs_amt);
-	player->update();
-	if(CollisonDetector::check_collisions_car(player, cars, cars_amt))
-	{
-		player->set_x(player_s->x);
-		player->set_y(player_s->y);
-	}
 
-
-	if (CollisonDetector::check_collision_border(player))
-	{
-		player->set_x(player_s->x);
-		player->set_y(player_s->y);
-	}
-	player->update();
-	fps_counter();
-	gui->update_info(world_time, fps);
-
-	
 	for (int i = 0; i < cars_amt; i++)
 	{
 		cars[i]->update();
@@ -147,6 +129,26 @@ void Game::update()
 	{
 		logs[i]->update();
 	}
+	player->update();
+	
+	CollisonDetector::check_collisions_logs(player, logs, logs_amt);
+	if (CollisonDetector::check_collisions_car(player, cars, cars_amt))
+	{
+		player->set_x(player_s->x);
+		player->set_y(player_s->y);
+	}
+
+	if (CollisonDetector::check_collision_border(player))
+	{
+		player->set_x(player_s->x);
+		player->set_y(player_s->y);
+	}
+	
+	player->update();
+	
+	fps_counter();
+	gui->update_info(world_time, fps);
+	
 	
 	frames++;
 }
@@ -332,7 +334,7 @@ void Game::load_structs()
 
 	logs_amt = 12;
 	logs_s = (game_object*)malloc(logs_amt * sizeof(game_object));
-	logs_s[0] = { 0, 32 * 5, 96,32,"assets/log.png", 5 };//
+	logs_s[0] = { 0, 32 * 5, 96,32,"assets/log.png", 3 };//
 	logs_s[1] = { SCREEN_WIDTH * 0, 32 * 4, 32 * 3,32,"assets/log.png", 1 };
 	logs_s[2] = { SCREEN_WIDTH * 1 / 2, 32 * 4, 32 * 3,32,"assets/log.png", 1 };
 	logs_s[3] = { SCREEN_WIDTH * 1 / 1, 32 * 4, 32 * 3,32,"assets/log.png", 1 };
