@@ -58,6 +58,7 @@ bool CollisonDetector::check_collision_border(Player* p)
 	SDL_Rect left_river;
 	SDL_Rect right_river;
 	SDL_Rect grass;
+	SDL_Rect river;
 
 	int amt_of_grass_rect = 4;
 
@@ -76,6 +77,11 @@ bool CollisonDetector::check_collision_border(Player* p)
 	grass.w = 50;//dimensions of texture
 	grass.h = 32;//dimensions of texture
 
+	river.x = 0;
+	river.y = 32;
+	river.h = 160;
+	river.w = SCREEN_WIDTH;
+
 	if(check_collision(p->get_dest_rect(), left_river) || check_collision(p->get_dest_rect(), right_river))
 	{
 		return true;
@@ -91,6 +97,11 @@ bool CollisonDetector::check_collision_border(Player* p)
 		grass.x += grass.w * 2; // skip water element and grass width
 	}
 
+	if(check_collision(p->get_dest_rect(), river) && !p->is_above_water())
+	{
+		return true;
+	}
+
 	return false;
 	
 }
@@ -101,13 +112,16 @@ bool CollisonDetector::check_collisions_logs(Player* p, Log* logs[], int logs_am
 	for (int i = 0; i < logs_amt; i++)
 	{
 		temp = logs[i]->get_dest_rect();
+		temp.x = temp.x + (SCREEN_WIDTH / X_CHUNKS / 2);
 		temp.w = temp.w - (SCREEN_WIDTH / X_CHUNKS); 
 		if (CollisonDetector::check_collision(p->get_dest_rect(), temp))
 		{
 			p->set_x(p->get_x() + logs[i]->get_velocity());
+			p->set_is_above_water(true);
 			return true;
 		}
 	}
+	p->set_is_above_water(false);
 	return false;
 }
 

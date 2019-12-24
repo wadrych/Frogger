@@ -119,9 +119,26 @@ void Game::update()
 {
 	calculate_time();
 
+	CollisonDetector::check_collisions_logs(player, logs, logs_amt);
 	player->update();
+	if(CollisonDetector::check_collisions_car(player, cars, cars_amt))
+	{
+		player->set_x(player_s->x);
+		player->set_y(player_s->y);
+	}
 
-	for(int i =0; i < cars_amt; i++)
+
+	if (CollisonDetector::check_collision_border(player))
+	{
+		player->set_x(player_s->x);
+		player->set_y(player_s->y);
+	}
+	player->update();
+	fps_counter();
+	gui->update_info(world_time, fps);
+
+	
+	for (int i = 0; i < cars_amt; i++)
 	{
 		cars[i]->update();
 	}
@@ -130,24 +147,6 @@ void Game::update()
 	{
 		logs[i]->update();
 	}
-
-	if(CollisonDetector::check_collisions_car(player, cars, cars_amt))
-	{
-		//player->set_x(player_s->x);
-		//player->set_y(player_s->y);
-	}
-
-	if(CollisonDetector::check_collision_border(player))
-	{
-		player->set_x(player_s->x);
-		player->set_y(player_s->y);
-	}
-
-	CollisonDetector::check_collisions_logs(player, logs, logs_amt);
-	
-	
-	fps_counter();
-	gui->update_info(world_time, fps);
 	
 	frames++;
 }
@@ -331,15 +330,20 @@ void Game::load_structs()
 	cars_s[12] = { SCREEN_WIDTH, 256, 32, 32, "assets/car_1.png", -8 };
 	cars_s[13] = { 0, 224, 64, 32, "assets/car_1.png", 1 };
 
-	logs_amt = 7;
+	logs_amt = 12;
 	logs_s = (game_object*)malloc(logs_amt * sizeof(game_object));
-	logs_s[0] = { 0, 32 * 5, 96,32,"assets/log.png", 5 };
-	logs_s[1] = { SCREEN_WIDTH * 0, 32 * 4, 96,32,"assets/log.png", 1 };
-	logs_s[2] = { SCREEN_WIDTH * 1 / 2, 32 * 4, 96,32,"assets/log.png", 1 };
-	logs_s[3] = { SCREEN_WIDTH * 1 / 1, 32 * 4, 96,32,"assets/log.png", 1 };
-	logs_s[4] = { SCREEN_WIDTH * 3 / 2, 32 * 4, 96,32,"assets/log.png", 1 };
-	logs_s[5] = { SCREEN_WIDTH * (-1) / 2, 32 * 4, 96,32,"assets/log.png", 1 };
-	logs_s[6] = { 0, 32 * 3, 96,32,"assets/log.png", -5 };
+	logs_s[0] = { 0, 32 * 5, 96,32,"assets/log.png", 5 };//
+	logs_s[1] = { SCREEN_WIDTH * 0, 32 * 4, 32 * 3,32,"assets/log.png", 1 };
+	logs_s[2] = { SCREEN_WIDTH * 1 / 2, 32 * 4, 32 * 3,32,"assets/log.png", 1 };
+	logs_s[3] = { SCREEN_WIDTH * 1 / 1, 32 * 4, 32 * 3,32,"assets/log.png", 1 };
+	logs_s[4] = { SCREEN_WIDTH * 3 / 2, 32 * 4, 32 * 3,32,"assets/log.png", 1 };
+	logs_s[5] = { SCREEN_WIDTH * (-1) / 2, 32 * 4, 32 * 3,32,"assets/log.png", 1 };
+	logs_s[6] = { SCREEN_WIDTH * 0, 32 * 3, 32 * 8,32,"assets/log_long.png", 2 };
+	logs_s[7] = { SCREEN_WIDTH * 3 / 2, 32 * 3, 32 * 8,32,"assets/log_long.png", 2 };
+	logs_s[8] = { SCREEN_WIDTH * 0, 32 * 1, 32 * 5,32,"assets/log_mid.png", 2 };
+	logs_s[9] = { SCREEN_WIDTH * 3 / 4, 32 * 1, 32 * 5,32,"assets/log_mid.png", 2 };
+	logs_s[10] = { SCREEN_WIDTH * 5 / 4, 32 * 1, 32 * 5,32,"assets/log_mid.png", 2 };
+	logs_s[11] = { SCREEN_WIDTH * 7 / 4, 32 * 1, 32 * 5,32,"assets/log_mid.png", 2 };
 
 
 
