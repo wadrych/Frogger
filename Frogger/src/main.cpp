@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 	{
 		frame_start = SDL_GetTicks();
 
-		game->handle_evnets();
+		game->handle_events();
 		game->update();
 		game->render();
 

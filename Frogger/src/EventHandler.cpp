@@ -12,7 +12,7 @@ void EventHandler::move_right(Player* p, Map* m)
 void EventHandler::move_left(Player* p, Map* m)
 {
 	p->move_left();
-	if (p->get_dest_rect().x <= 0 && p->get_dest_rect().y >= 192)//192 pixel - beggining of route
+	if (p->get_dest_rect().x <= 0 && p->get_dest_rect().y >= 192)//192 pixel - beginning of route
 	{
 		p->move_right();
 	}

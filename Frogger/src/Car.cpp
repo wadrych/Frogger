@@ -12,7 +12,7 @@ Car::~Car()
 
 void Car::update()
 {
-	int distance = get_x() + velocity;
+	double distance = get_x() + velocity;
 	if( distance > street)
 	{
 		distance = -SCREEN_WIDTH / X_CHUNKS;
@@ -27,12 +27,12 @@ void Car::update()
 	GameObject::update();
 }
 
-void Car::set_velocity(int v)
+void Car::set_velocity(double v)
 {
 	velocity = v;
 }
 
-int Car::get_velocity()
+double Car::get_velocity()
 {
 	return velocity;
 }

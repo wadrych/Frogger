@@ -12,7 +12,7 @@ Log::~Log()
 
 void Log::update()
 {
-	int distance = get_x() + velocity;
+	double distance = get_x() + velocity; // 0.05 to make things slower  
 	if (distance > street)
 	{
 		distance = -SCREEN_WIDTH / X_CHUNKS * 6; // 6- cause log is max 6 tiles
@@ -27,12 +27,12 @@ void Log::update()
 	GameObject::update();
 }
 
-int Log::get_velocity()
+double Log::get_velocity()
 {
 	return  velocity;
 }
 
-void Log::set_velocity(int v)
+void Log::set_velocity(double v)
 {
 	velocity = v;
 }

@@ -8,7 +8,7 @@ typedef struct game_object
 	int x, y;
 	int w, h;
 	const char* path;
-	int v;
+	double v;
 } game_object;
 
 class GameObject
@@ -19,19 +19,20 @@ public:
 
 	void render();
 	void update();
-	void set_x(int x);
-	void set_y(int y);
+	void set_x(double x);
+	void set_y(double y);
 
-	int get_x();
-	int get_y();
+	double get_x();
+	double get_y();
 	
 	SDL_Texture* get_texture();
 	SDL_Rect get_dest_rect();
+	SDL_Rect get_src_rect();
 private:
 	SDL_Texture* sprite;
 	SDL_Rect src_r;
 	SDL_Rect dest_r;
 
-	int pos_x;
-	int pos_y;
+	double pos_x;
+	double pos_y;
 };

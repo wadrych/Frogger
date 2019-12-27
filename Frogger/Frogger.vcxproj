@@ -148,6 +148,7 @@
     <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\TextureManager.cpp" />
+    <ClCompile Include="src\Tortoise.cpp" />
     <ClCompile Include="src\UserInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +162,7 @@
     <ClInclude Include="src\Map.h" />
     <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\TextureManager.h" />
+    <ClInclude Include="src\Tortoise.h" />
     <ClInclude Include="src\UserInterface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

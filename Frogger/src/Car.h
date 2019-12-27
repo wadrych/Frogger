@@ -9,11 +9,11 @@ public:
 	~Car();
 	
 	void update();
-	void set_velocity(int v);
-	int get_velocity();
+	void set_velocity(double v);
+	double get_velocity();
 	
 private:
-	int velocity;
+	double velocity;
 	int street;
 };
 
