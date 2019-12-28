@@ -2,8 +2,6 @@
 #include "SDL.h"
 
 #include "Player.h"
-#include "Car.h"
-#include "Log.h"
 #include "Tortoise.h"
 
 class CollisionDetector

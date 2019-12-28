@@ -2,7 +2,6 @@
 
 #include "Player.h"
 #include "Map.h"
-#include "Car.h"
 #include "CollisionDetector.h"
 
 class EventHandler

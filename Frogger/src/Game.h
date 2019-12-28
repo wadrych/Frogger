@@ -10,8 +10,6 @@
 #include "UserInterface.h"
 #include "Map.h"
 #include "Player.h"
-#include "Car.h"
-#include "Log.h"
 #include "Tortoise.h"
 #include "EventHandler.h"
 
@@ -56,25 +54,28 @@ private:
 	int spots_[5];
 	int spots_amt_;
 
+
+	bool sdl_initialization(const char* title, const int x_pos, const int y_pos, const bool fullscreen);
 	void fps_counter();
 	void calculate_time();
 	void set_renderer_conf();
 	void create_gui();
 	void create_map();
-	void load_entities();
-	void create_player();
-	void create_cars();
-	void create_logs();
-	void create_tortoises();
 	void fail();
 	void success();
 	bool check_if_won();
 	void check_collisions();
-	void update_entities();
-	bool sdl_initialization(const char* title, const int x_pos, const int y_pos, const bool fullscreen);
 	void render_spots();
+
+	void load_entities();
+	void create_entities();
+	void update_entities();
 	void render_entities();
 	void destroy_entities();
-	void create_entities();
+
+	void create_player();
+	void create_cars();
+	void create_logs();
+	void create_tortoises();
 	
 };
