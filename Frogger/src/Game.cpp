@@ -2,7 +2,7 @@
 
 SDL_Renderer* Global::renderer = NULL;
 TTF_Font* Global::font = NULL;
-int Global::time = 0;
+long long int Global::time_delta = 0;
 
 UserInterface* gui;
 Map* map;
@@ -30,155 +30,38 @@ Game::~Game()
 {
 }
 
-void Game::init(const char* title, const int xpos, const int ypos, const bool fullscreen)
+void Game::init(const char* title, const int x_pos, const int y_pos, const bool fullscreen)
 {
 	srand(time(NULL));
 	
-	int flags = 0;
-	if (fullscreen)
-	{
-		flags = SDL_WINDOW_FULLSCREEN;
-	}
+	is_running = sdl_initialization(title, x_pos, y_pos, fullscreen);
 
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-	{
-		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-		is_running = false;
-	}
-	else
-	{
-		printf("SDL initialized!\n");
-		window = SDL_CreateWindow(title, xpos, ypos, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
+	set_renderer_conf();
+	SDL_ShowCursor(SDL_DISABLE);
+	
+	last_frame_time = SDL_GetTicks();//Init of world time
 
-		if (window == NULL)
-		{
-			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-			is_running = false;
-		}
-		else
-		{
-			printf("Window initialized!\n");
-			Global::renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	create_map();
+	create_gui();
 
-			if (Global::renderer == NULL)
-			{
-				printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
-				is_running = false;
-			}
-			else
-			{
-				printf("Renderer initialized!\n");
+	load_entities();
 
-				const int imgFlags = IMG_INIT_PNG;
-				
-				if(!(IMG_Init(imgFlags) & imgFlags))
-				{
-					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-					is_running = false;
-				}
-				else
-				{
-					printf("SDL_image initialized!\n");
-					if (TTF_Init() == -1)
-					{
-						printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
-						is_running = false;
-					}
-					else
-					{
-						printf("SDL_ttf initialized!\n");
-						Global::font = TTF_OpenFont("../../TTF/UniversCondensed.ttf", 28);
-						if (Global::font == NULL)
-						{
-							printf("Font could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
-							is_running = false;
-						}
-						else
-						{
-							printf("Font initialized!\n");
-							is_running = true;
-
-							set_renderer_conf();
-
-							create_map();
-
-							create_gui();
-
-							//loads initialization structs
-							load_structs();
-
-							create_player();
-
-							create_cars();
-
-							create_logs();
-
-							create_tortoises();
-							
-							SDL_ShowCursor(SDL_DISABLE);
-
-							//Init of world time
-							last_frame_time = SDL_GetTicks();
-						}
-					}
-				}
-			}
-		}
-	}
+	create_entities();
 }
 
 void Game::update()
 {
 	calculate_time();
 
-
-	for (int i = 0; i < cars_amt; i++)
-	{
-		cars[i]->update();
-	}
-
-	for (int i = 0; i < logs_amt; i++)
-	{
-		logs[i]->update();
-	}
-
-	for (int i = 0; i < tortoises_amt; i++)
-	{
-		tortoises[i]->update();
-	}
+	update_entities();
 	
-	player->update();
+	check_collisions();
 	
-	const int spot = CollisonDetector::check_collisions_spots(player);
-	if (spot != -1)
-	{
-		if (spots[spot] == 1)
-		{
-			fail();
-		}
-		else
-		{
-			spots[spot] = 1;
-			success();
-		}
-	}
-	
-	CollisonDetector::check_collisions_water(player, logs, logs_amt, tortoises, tortoises_amt);
-	if (CollisonDetector::check_collisions_car(player, cars, cars_amt))
-	{
-		fail();
-	}
-
-	if (CollisonDetector::check_collision_border(player))
-	{
-		fail();
-	}
-	
-	player->update();
+	player->update(); //if position of player was changed due to detected collisions apply the changes
 	
 	fps_counter();
-	gui->update_info(world_time, fps);
 	
+	gui->update_info(world_time, fps);
 	
 	frames++;
 }
@@ -190,40 +73,14 @@ void Game::render()
 	map->render();
 	gui->render();
 
-	for(int i = 0; i < spots_amt; i++)
-	{
-		if(spots[i] == 1)
-		{
-			SDL_Rect temp;
-			temp.x = 16 + i * 96;
-			temp.y = 16;
-			temp.w = 32;
-			temp.h = 32;
-			SDL_RenderCopy(Global::renderer, player->get_texture(), &(player->get_src_rect()), &temp);
-		}
-	}
-	
-	for (int i = 0; i < cars_amt; i++)
-	{
-		cars[i]->render();
-	}
-	for (int i = 0; i < logs_amt; i++)
-	{
-		logs[i]->render();
-	}
-	for (int i = 0; i < tortoises_amt; i++)
-	{
-		tortoises[i]->render();
-	}
-	
-	player->render();
+	render_spots();
+	render_entities();
 
 	SDL_RenderPresent(Global::renderer);
 }
 
 void Game::clean()
 {
-	//Destroy Texture
 	SDL_DestroyTexture(screen);
 	screen = NULL;
 
@@ -232,50 +89,21 @@ void Game::clean()
 	SDL_DestroyTexture(gui->get_texture_text());
 
 	SDL_DestroyTexture(map->get_texture());
-	
-	SDL_DestroyTexture(player->get_texture());
 
-	for (int i = 0; i < cars_amt; i++)
-	{
-		SDL_DestroyTexture(cars[i]->get_texture());
-	}
-	for (int i = 0; i < logs_amt; i++)
-	{
-		SDL_DestroyTexture(logs[i]->get_texture());
-	}
-	for (int i = 0; i < tortoises_amt; i++)
-	{
-		SDL_DestroyTexture(tortoises[i]->get_texture());
-	}
-
-	//Destroy renderer
 	SDL_DestroyRenderer(Global::renderer);
 	Global::renderer = NULL;
 
-	//Destroy window
 	SDL_DestroyWindow(window);
 	window = NULL;
-	
-	//Delete objects
-	free_structs();
+
 	
 	delete gui;
 	delete map;
-	delete player;
-	for (int i = 0; i < cars_amt; i++)
-	{
-		delete cars[i];
-	}
-	for (int i = 0; i < logs_amt; i++)
-	{
-		delete logs[i];
-	}
-	for (int i = 0; i < tortoises_amt; i++)
-	{
-		delete tortoises[i];
-	}
 
-	//Quit SDL subsystems
+	
+	destroy_entities();
+	
+
 	SDL_Quit();
 
 	printf("Game cleaned\n");
@@ -330,8 +158,8 @@ void Game::calculate_time()
 
 	current_frame_time = SDL_GetTicks();
 
-	Global::time = (current_frame_time - last_frame_time);
-	delta = (current_frame_time - last_frame_time) * to_seconds;
+	Global::time_delta = (current_frame_time - last_frame_time);
+	delta = Global::time_delta * to_seconds;
 	last_frame_time = current_frame_time;
 
 	world_time += delta;
@@ -367,7 +195,7 @@ void Game::create_cars()
 	}
 }
 
-void Game::load_structs()
+void Game::load_entities()
 {
 	player_s = (game_object*)malloc(sizeof(game_object));
 	*player_s = { 32 * 7 , 32 * 12 + 16, 32, 32,  "assets/frogger.png", 0 };
@@ -429,15 +257,6 @@ void Game::create_player()
 {
 	player = new Player(player_s);
 }
-
-void Game::free_structs()
-{
-	free(player_s);
-	free(cars_s);
-	free(logs_s);
-	free(tortoises_s);
-}
-
 void Game::create_logs()
 {
 	logs = (Log**)malloc(logs_amt * sizeof(Log*));
@@ -486,4 +305,204 @@ bool Game::check_if_won()
 		}
 	}
 	return true;
+}
+
+void Game::check_collisions()
+{
+	const int spot = CollisonDetector::check_collisions_spots(player);
+	if (spot != -1)
+	{
+		if (spots[spot] == 1)
+		{
+			fail();
+		}
+		else
+		{
+			spots[spot] = 1;
+			success();
+		}
+	}
+
+	CollisonDetector::check_collisions_water(player, logs, logs_amt, tortoises, tortoises_amt);
+	if (CollisonDetector::check_collisions_car(player, cars, cars_amt))
+	{
+		fail();
+	}
+
+	if (CollisonDetector::check_collision_border(player))
+	{
+		fail();
+	}
+}
+
+void Game::update_entities()
+{
+	player->update();
+	
+	for (int i = 0; i < cars_amt; i++)
+	{
+		cars[i]->update();
+	}
+
+	for (int i = 0; i < logs_amt; i++)
+	{
+		logs[i]->update();
+	}
+
+	for (int i = 0; i < tortoises_amt; i++)
+	{
+		tortoises[i]->update();
+	}
+}
+
+bool Game::sdl_initialization(const char* title, const int x_pos, const int y_pos, const bool fullscreen)
+{
+	int flags = 0;
+	if (fullscreen)
+	{
+		flags = SDL_WINDOW_FULLSCREEN;
+	}
+
+	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+	{
+		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+		return false;
+	}
+	else
+	{
+		printf("SDL initialized!\n");
+		window = SDL_CreateWindow(title, x_pos, y_pos, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
+
+		if (window == NULL)
+		{
+			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+			return false;
+		}
+		else
+		{
+			printf("Window initialized!\n");
+			Global::renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+			if (Global::renderer == NULL)
+			{
+				printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
+				return false;
+			}
+			else
+			{
+				printf("Renderer initialized!\n");
+
+				const int img_flags = IMG_INIT_PNG;
+
+				if (!(IMG_Init(img_flags) & img_flags))
+				{
+					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+					return false;
+				}
+				else
+				{
+					printf("SDL_image initialized!\n");
+					if (TTF_Init() == -1)
+					{
+						printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+						return false;
+					}
+					else
+					{
+						printf("SDL_ttf initialized!\n");
+						Global::font = TTF_OpenFont("../../TTF/UniversCondensed.ttf", 28);
+						if (Global::font == NULL)
+						{
+							printf("Font could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+							return false;
+						}
+						else
+						{
+							printf("Font initialized!\n");
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}						
+}
+
+void Game::render_entities()
+{
+	for (int i = 0; i < cars_amt; i++)
+	{
+		cars[i]->render();
+	}
+	for (int i = 0; i < logs_amt; i++)
+	{
+		logs[i]->render();
+	}
+	for (int i = 0; i < tortoises_amt; i++)
+	{
+		tortoises[i]->render();
+	}
+
+	player->render();
+}
+
+void Game::render_spots()
+{
+	for (int i = 0; i < spots_amt; i++)
+	{
+		if (spots[i] == 1)
+		{
+			SDL_Rect temp;
+			temp.x = 16 + i * 96;
+			temp.y = 16;
+			temp.w = 32;
+			temp.h = 32;
+			SDL_RenderCopy(Global::renderer, player->get_texture(), &(player->get_src_rect()), &temp);
+		}
+	}
+}
+
+void Game::destroy_entities()
+{
+	SDL_DestroyTexture(player->get_texture());
+	
+	for (int i = 0; i < cars_amt; i++)
+	{
+		SDL_DestroyTexture(cars[i]->get_texture());
+	}
+	for (int i = 0; i < logs_amt; i++)
+	{
+		SDL_DestroyTexture(logs[i]->get_texture());
+	}
+	for (int i = 0; i < tortoises_amt; i++)
+	{
+		SDL_DestroyTexture(tortoises[i]->get_texture());
+	}
+
+	delete player;
+	for (int i = 0; i < cars_amt; i++)
+	{
+		delete cars[i];
+	}
+	for (int i = 0; i < logs_amt; i++)
+	{
+		delete logs[i];
+	}
+	for (int i = 0; i < tortoises_amt; i++)
+	{
+		delete tortoises[i];
+	}
+
+	free(player_s);
+	free(cars_s);
+	free(logs_s);
+	free(tortoises_s);
+}
+
+void Game::create_entities()
+{
+	player = new Player(player_s);
+	create_cars();
+	create_logs();
+	create_tortoises();
 }

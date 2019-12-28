@@ -21,7 +21,7 @@ public:
 	Game();
 	~Game();
 
-	void init(const char* title, int xpos, int ypos, bool fullscreen);
+	void init(const char* title, int x_pos, int y_pos, bool fullscreen);
 
 	void handle_events();
 	void update();
@@ -61,8 +61,7 @@ private:
 	void set_renderer_conf();
 	void create_gui();
 	void create_map();
-	void load_structs();
-	void free_structs();
+	void load_entities();
 	void create_player();
 	void create_cars();
 	void create_logs();
@@ -70,5 +69,12 @@ private:
 	void fail();
 	void success();
 	bool check_if_won();
+	void check_collisions();
+	void update_entities();
+	bool sdl_initialization(const char* title, const int x_pos, const int y_pos, const bool fullscreen);
+	void render_spots();
+	void render_entities();
+	void destroy_entities();
+	void create_entities();
 	
 };
