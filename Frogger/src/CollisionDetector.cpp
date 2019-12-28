@@ -1,7 +1,7 @@
-#include "CollisonDetector.h"
+#include "CollisionDetector.h"
 
 
-bool CollisonDetector::check_collision(SDL_Rect a, SDL_Rect b)
+bool CollisionDetector::check_collision(SDL_Rect a, SDL_Rect b)
 {
 	int left_a, left_b;
 	int right_a, right_b;
@@ -41,11 +41,11 @@ bool CollisonDetector::check_collision(SDL_Rect a, SDL_Rect b)
 	return true;
 }
 
-bool CollisonDetector::check_collisions_car(Player* p, Car* cars[], int cars_amt)
+bool CollisionDetector::check_collisions_car(Player* p, GameObject* cars[], int cars_amt)
 {
 	for (int i = 0; i < cars_amt; i++)
 	{
-		if (CollisonDetector::check_collision(p->get_dest_rect(), cars[i]->get_dest_rect()))
+		if (CollisionDetector::check_collision(p->get_dest_rect(), cars[i]->get_dest_rect()))
 		{
 			return true;
 		}
@@ -53,7 +53,7 @@ bool CollisonDetector::check_collisions_car(Player* p, Car* cars[], int cars_amt
 	return false;
 }
 
-bool CollisonDetector::check_collision_border(Player* p)
+bool CollisionDetector::check_collision_border(Player* p)
 {
 	SDL_Rect left_river;
 	SDL_Rect right_river;
@@ -106,7 +106,7 @@ bool CollisonDetector::check_collision_border(Player* p)
 	
 }
 
-bool CollisonDetector::check_collisions_water(Player* p, Log* logs[], int logs_amt, Tortoise* tortoises[], int tortoises_amt)
+bool CollisionDetector::check_collisions_water(Player* p, GameObject* logs[], int logs_amt, Tortoise* tortoises[], int tortoises_amt)
 {
 	SDL_Rect temp;
 	
@@ -115,7 +115,7 @@ bool CollisonDetector::check_collisions_water(Player* p, Log* logs[], int logs_a
 		temp = logs[i]->get_dest_rect();
 		temp.x = temp.x + (SCREEN_WIDTH / X_CHUNKS / 2); // so to make rect in the middle of log with 1/2 of 32x32 offset 
 		temp.w = temp.w - (SCREEN_WIDTH / X_CHUNKS);  // from width delete one 32x32
-		if (CollisonDetector::check_collision(p->get_dest_rect(), temp))
+		if (CollisionDetector::check_collision(p->get_dest_rect(), temp))
 		{
 			p->set_x(p->get_x() + logs[i]->get_velocity());
 			p->set_is_above_water(true);
@@ -131,7 +131,7 @@ bool CollisonDetector::check_collisions_water(Player* p, Log* logs[], int logs_a
 			temp = tortoises[i]->get_dest_rect();
 			temp.x = temp.x + (SCREEN_WIDTH / X_CHUNKS / 2); // so to make rect in the middle of log with 1/2 of 32x32 offset 
 			temp.w = temp.w - (SCREEN_WIDTH / X_CHUNKS);  // from width delete one 32x32
-			if (CollisonDetector::check_collision(p->get_dest_rect(), temp))
+			if (CollisionDetector::check_collision(p->get_dest_rect(), temp))
 			{
 				p->set_x(p->get_x() + tortoises[i]->get_velocity());
 				p->set_is_above_water(true);
@@ -145,7 +145,7 @@ bool CollisonDetector::check_collisions_water(Player* p, Log* logs[], int logs_a
 	return false;
 }
 
-int CollisonDetector::check_collisions_spots(Player* p)
+int CollisionDetector::check_collisions_spots(Player* p)
 {
 	SDL_Rect spot;
 

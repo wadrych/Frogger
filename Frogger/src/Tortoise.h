@@ -10,17 +10,13 @@ public:
 	~Tortoise();
 
 	void update();
-	void set_velocity(double v);
-	double get_velocity();
 	bool is_visible();
-	void set_visible(bool v);
+	void set_visible(const bool v);
 	void render();
 
 private:
-	double velocity;
-	int street;
-	bool visible;
-	bool diving;
-	int delta;
+	bool visible_;
+	bool diving_;
+	long long int delta_;
 };
 

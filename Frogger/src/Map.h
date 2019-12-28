@@ -9,7 +9,7 @@ public:
 	Map();
 	~Map();
 
-	void init(int width, int height);
+	void init(const int width, const int height);
 	void render();
 	
 	SDL_Texture* get_texture();
@@ -17,8 +17,8 @@ public:
 	SDL_Rect get_right_border();
 	
 private:
-	SDL_Texture* texture;
-	SDL_Rect src_r;
-	SDL_Rect dest_r;
+	SDL_Texture* texture_;
+	SDL_Rect src_r_;
+	SDL_Rect dest_r_;
 };
 

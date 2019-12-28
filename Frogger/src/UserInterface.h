@@ -12,21 +12,20 @@ public:
 	UserInterface();
 	~UserInterface();
 
-	void init(int surface_height, int surface_width, int window_hight);
+	void init(const int surface_height, const int surface_width, const int window_height);
 	void update_info(double world_time, double fps);
 	void render();
 	SDL_Texture* get_texture();
 	SDL_Texture* get_texture_text();
 	
 private:
-	SDL_Texture* container;
-	SDL_Texture* text_container;
-	SDL_Surface* charset;
-	SDL_Rect src_r;
-	SDL_Rect dest_r;
-	SDL_Rect src_r_text;
-	SDL_Rect dest_r_text;
+	SDL_Texture* container_;
+	SDL_Texture* text_container_;
+	SDL_Rect src_r_;
+	SDL_Rect dest_r_;
+	SDL_Rect src_r_text_;
+	SDL_Rect dest_r_text_;
 	
-	int surface_height;
-	int surface_width;
+	int surface_height_;
+	int surface_width_;
 };

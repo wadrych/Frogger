@@ -8,38 +8,38 @@ Map::~Map()
 {	
 }
 
-void Map::init(int dest_width, int dest_height)
+void Map::init(const int width, const int height)
 {
-	dest_r.w = dest_width;
-	dest_r.h = dest_height;
-	dest_r.x = 0;
-	dest_r.y = 0;
+	dest_r_.w = width;
+	dest_r_.h = height;
+	dest_r_.x = 0;
+	dest_r_.y = 0;
 
-	texture = TextureManager::load_texture("assets/map.png");
+	texture_ = TextureManager::load_texture("assets/map.png");
 }
 
 SDL_Texture* Map::get_texture()
 {
-	return texture;
+	return texture_;
 }
 
 void Map::render()
 {
-	SDL_RenderCopy(Global::renderer, texture, NULL, &dest_r);
+	SDL_RenderCopy(Global::renderer, texture_, NULL, &dest_r_);
 }
 
 SDL_Rect Map::get_dest_rect()
 {
-	return dest_r;
+	return dest_r_;
 }
 
 SDL_Rect Map::get_right_border()
 {
 	SDL_Rect r;
 
-	r.h = dest_r.h;
+	r.h = dest_r_.h;
 	r.w = 1;
-	r.x = dest_r.w;
+	r.x = dest_r_.w;
 	r.y = 0;
 
 	return r;

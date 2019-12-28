@@ -31,30 +31,30 @@ public:
 	bool running();
 
 private:
-	bool is_running;
-	SDL_Window* window;
-	SDL_Texture* screen;
+	bool is_running_;
+	SDL_Window* window_;
+	SDL_Texture* screen_;
 
-	Uint32 last_frame_time;
-	Uint32 current_frame_time;
+	Uint32 last_frame_time_;
+	Uint32 current_frame_time_;
 
-	int frames;
+	int frames_;
 
-	double world_time;
-	double fps_timer;
-	double delta;
-	double fps;
+	double world_time_;
+	double fps_timer_;
+	double delta_;
+	double fps_;
 
-	game_object* player_s;
-	game_object* cars_s;
-	game_object* logs_s;
-	game_object* tortoises_s;
+	game_object* player_s_;
+	game_object* cars_s_;
+	game_object* logs_s_;
+	game_object* tortoises_s_;
 
-	int cars_amt;
-	int logs_amt;
-	int tortoises_amt;
-	int spots[5];
-	int spots_amt;
+	int cars_amt_;
+	int logs_amt_;
+	int tortoises_amt_;
+	int spots_[5];
+	int spots_amt_;
 
 	void fps_counter();
 	void calculate_time();

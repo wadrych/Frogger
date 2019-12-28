@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include "Game.h"
-#include "SDL.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -32,7 +31,6 @@ int main(int argc, char** argv)
 		game->handle_events();
 		game->update();
 		game->render();
-
 
 		//Framerate capping
 		frame_time = SDL_GetTicks() - frame_start;

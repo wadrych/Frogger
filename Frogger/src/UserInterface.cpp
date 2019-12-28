@@ -8,30 +8,29 @@ UserInterface::~UserInterface()
 {
 }
 
-void UserInterface::init(int surface_height, int surface_width, int window_hight)
+void UserInterface::init(const int surface_height, const int surface_width, const int window_height)
 {
-	this->surface_height = surface_height;
-	this->surface_width = surface_width;
-	charset = NULL;
+	this->surface_height_ = surface_height;
+	this->surface_width_ = surface_width;
 	
-	dest_r.w = surface_width;
-	dest_r.h = surface_height;
-	dest_r.x = 0;
-	dest_r.y = window_hight - surface_height;
-	dest_r_text.w = surface_width / 2;
-	dest_r_text.h = surface_height - 2;
-	dest_r_text.x = 0;
-	dest_r_text.y = dest_r.y;
+	dest_r_.w = surface_width;
+	dest_r_.h = surface_height;
+	dest_r_.x = 0;
+	dest_r_.y = window_height - surface_height;
+	dest_r_text_.w = surface_width / 2;
+	dest_r_text_.h = surface_height - 2;
+	dest_r_text_.x = 0;
+	dest_r_text_.y = dest_r_.y;
 
 }
 
 
 void  UserInterface::update_info(double world_time, double fps)
 {
-	SDL_DestroyTexture(container);
-	SDL_DestroyTexture(text_container);
+	SDL_DestroyTexture(container_);
+	SDL_DestroyTexture(text_container_);
 	
-	SDL_Surface* temp_surface = SDL_CreateRGBSurface(0, surface_width, surface_height, 32,
+	SDL_Surface* temp_surface = SDL_CreateRGBSurface(0, surface_width_, surface_height_, 32,
 		0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 	if(temp_surface == NULL)
 	{
@@ -43,7 +42,7 @@ void  UserInterface::update_info(double world_time, double fps)
 		const Uint32 line_color = SDL_MapRGB(temp_surface->format, 0xFF, 0x00, 0x00);
 		const Uint32 container_color = SDL_MapRGB(temp_surface->format, 0x00, 0x00, 0x00);
 
-		TextureManager::draw_rectangle(temp_surface, 0, 0, surface_width, surface_height, line_color, container_color);
+		TextureManager::draw_rectangle(temp_surface, 0, 0, surface_width_, surface_height_, line_color, container_color);
 
 		sprintf(text, "Czas trwania = %.1lf s  %.0lf klatek / s", world_time, fps);
 		SDL_Surface* text_surface = TTF_RenderText_Solid(Global::font, text, { 255,255,255 });
@@ -54,9 +53,9 @@ void  UserInterface::update_info(double world_time, double fps)
 		}
 		else
 		{
-			container = SDL_CreateTextureFromSurface(Global::renderer, temp_surface);
-			text_container = SDL_CreateTextureFromSurface(Global::renderer, text_surface);
-			if(container  == NULL || text_container == NULL)
+			container_ = SDL_CreateTextureFromSurface(Global::renderer, temp_surface);
+			text_container_ = SDL_CreateTextureFromSurface(Global::renderer, text_surface);
+			if(container_  == NULL || text_container_ == NULL)
 			{
 				printf("Unable to create gui textures ! SDL Error: %s\n", SDL_GetError());
 			}
@@ -68,16 +67,16 @@ void  UserInterface::update_info(double world_time, double fps)
 
 SDL_Texture* UserInterface::get_texture()
 {
-	return container;
+	return container_;
 }
 
 void UserInterface::render()
 {
-	SDL_RenderCopy(Global::renderer, container, NULL, &dest_r);
-	SDL_RenderCopy(Global::renderer, text_container, NULL, &dest_r_text);
+	SDL_RenderCopy(Global::renderer, container_, NULL, &dest_r_);
+	SDL_RenderCopy(Global::renderer, text_container_, NULL, &dest_r_text_);
 }
 
 SDL_Texture* UserInterface::get_texture_text()
 {
-	return text_container;
+	return text_container_;
 }

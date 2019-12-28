@@ -2,16 +2,17 @@
 
 Tortoise::Tortoise(game_object* rect) :GameObject(rect)
 {
-	velocity = rect->v;
-	street = 2 * SCREEN_WIDTH;
-	visible = true;
-	if(rand()%4 == 0)
+	velocity_ = rect->v;
+	street_ = 2 * SCREEN_WIDTH;
+	visible_ = true;
+	
+	if(rand()%6 == 0)
 	{
-		diving = true;
+		diving_ = true;
 	}
 	else
 	{
-		diving = false;
+		diving_ = false;
 	}
 }
 
@@ -21,60 +22,33 @@ Tortoise::~Tortoise()
 
 void Tortoise::update()
 {
-	double distance = get_x() + velocity;
-	
-	if (distance > street)
+	if(diving_)
 	{
-		distance = -SCREEN_WIDTH / X_CHUNKS * 6; // 6- cause log is max 6 tiles
-	}
-
-	if (distance < -SCREEN_WIDTH / X_CHUNKS * 6)// 6- cause log is max 6 tiles
-	{
-		distance = street;
-	}
-
-	if(diving)
-	{
-		delta += Global::time_delta;
-		if(delta >= 1000)
+		delta_ += Global::time_delta;
+		if(delta_ >= 1000)
 		{
-			visible = !visible;
-			delta = 0;
+			visible_ = !visible_;
+			delta_ = 0;
 		}
 	}
-
-	set_x(distance);
+	
 	GameObject::update();
-}
-
-double Tortoise::get_velocity()
-{
-	return velocity;
-}
-
-void Tortoise::set_velocity(double v)
-{
-	velocity = v;
 }
 
 bool Tortoise::is_visible()
 {
-	return visible;
+	return visible_;
 }
 
-void Tortoise::set_visible(bool v)
+void Tortoise::set_visible(const bool v)
 {
-	visible = v;
+	visible_ = v;
 }
 
 void Tortoise::render()
 {
-	if(visible)
+	if(visible_)
 	{
 		GameObject::render();
 	}
-	else
-	{
-	}
-	
 }

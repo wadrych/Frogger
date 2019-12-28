@@ -2,8 +2,8 @@
 
 Player::Player(game_object* rect) : GameObject(rect)
 {
-	health = 10;
-	is_on_sth = false;
+	health_ = 10;
+	is_on_sth_ = false;
 }
 
 Player::~Player()
@@ -12,36 +12,36 @@ Player::~Player()
 
 void Player::move_right()
 {
-	const int distance = SCREEN_WIDTH / X_CHUNKS;
-	set_x(get_x() + distance);
+	const int distance = 32;
+	pos_x_ += distance;
 }
 
 void Player::move_left()
 {
-	const int distance = SCREEN_WIDTH / X_CHUNKS;
-	set_x(get_x() - distance);
+	const int distance = -32;
+	pos_x_ += distance;
 }
 
 void Player::move_up()
 {
-	const int distance = 32;
-	set_y(get_y() - distance);
+	const int distance = -32;
+	pos_y_ += distance;
 }
 
 
 void Player::move_down()
 {
 	const int distance = 32;
-	set_y(get_y() + distance);
+	pos_y_ += distance;
 }
 
 bool Player::is_above_water()
 {
-	return is_on_sth;
+	return is_on_sth_;
 }
 
 void Player::set_is_above_water(bool n)
 {
-	is_on_sth = n;
+	is_on_sth_ = n;
 }
 

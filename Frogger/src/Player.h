@@ -17,7 +17,7 @@ public:
 	void set_is_above_water(bool n);
 
 private:
-	int health;
-	bool is_on_sth;
+	int health_;
+	bool is_on_sth_;
 };
 

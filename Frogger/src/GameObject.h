@@ -28,11 +28,16 @@ public:
 	SDL_Texture* get_texture();
 	SDL_Rect get_dest_rect();
 	SDL_Rect get_src_rect();
-private:
-	SDL_Texture* sprite;
-	SDL_Rect src_r;
-	SDL_Rect dest_r;
+	void set_velocity(int v);
+	double get_velocity();
 
-	double pos_x;
-	double pos_y;
+protected:
+	SDL_Texture* sprite_;
+	SDL_Rect src_r_;
+	SDL_Rect dest_r_;
+
+	double pos_x_;
+	double pos_y_;
+	double velocity_;
+	int street_;
 };

@@ -33,22 +33,16 @@
     <ClCompile Include="src\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CollisonDetector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\EventHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Car.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Log.cpp">
+    <ClCompile Include="src\Tortoise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Tortoise.cpp">
+    <ClCompile Include="src\CollisionDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,25 +62,19 @@
     <ClInclude Include="src\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\CollisonDetector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\EventHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Car.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Log.h">
+    <ClInclude Include="src\Tortoise.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Tortoise.h">
+    <ClInclude Include="src\CollisionDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
