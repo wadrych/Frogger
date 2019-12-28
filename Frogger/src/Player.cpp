@@ -2,8 +2,6 @@
 
 Player::Player(game_object* rect) : GameObject(rect)
 {
-	health_ = 10;
-	is_on_sth_ = false;
 }
 
 Player::~Player()
@@ -45,3 +43,29 @@ void Player::set_is_above_water(bool n)
 	is_on_sth_ = n;
 }
 
+void Player::lost()
+{
+	health_--;
+
+	if(health_ < 1)
+	{
+		is_alive_ = false;
+	}
+}
+
+bool Player::is_alive()
+{
+	return is_alive_;
+}
+
+int Player::health()
+{
+	return health_;
+}
+
+void Player::init()
+{
+	health_ = 3;
+	is_on_sth_ = false;
+	is_alive_ = true;
+}

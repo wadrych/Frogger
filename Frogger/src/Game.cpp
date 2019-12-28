@@ -4,26 +4,21 @@ SDL_Renderer* Global::renderer = NULL;
 TTF_Font* Global::font = NULL;
 long long int Global::time_delta = 0;
 
+Player* EntitiyManager::player;
+GameObject** EntitiyManager::cars;
+GameObject** EntitiyManager::logs;
+Tortoise** EntitiyManager::tortoises;
+
+game_object* EntitiyManager::player_s;
+game_object* EntitiyManager::cars_s;
+game_object* EntitiyManager::logs_s;
+game_object* EntitiyManager::tortoises_s;
+
 UserInterface* gui;
 Map* map;
-Player* player;
-GameObject** cars;
-GameObject** logs;
-Tortoise** tortoises;
 
 Game::Game()
 {
-	frames_ = 0;
-	fps_timer_ = 0;
-	fps_ = 0;
-	world_time_ = 0;
-	cars_amt_ = 0;
-	spots_[0] = 0;
-	spots_[1] = 0;
-	spots_[2] = 0;
-	spots_[3] = 0;
-	spots_[4] = 0;
-	spots_amt_ = 5;
 }
 
 Game::~Game()
@@ -32,6 +27,18 @@ Game::~Game()
 
 void Game::init(const char* title, const int x_pos, const int y_pos, const bool fullscreen)
 {
+	frames_ = 0;
+	fps_timer_ = 0;
+	fps_ = 0;
+	world_time_ = 0;
+	spots_[0] = 0;
+	spots_[1] = 0;
+	spots_[2] = 0;
+	spots_[3] = 0;
+	spots_[4] = 0;
+	spots_amt_ = 5;
+	game_over_ = false;
+	
 	srand(time(NULL));
 	
 	is_running_ = sdl_initialization(title, x_pos, y_pos, fullscreen);
@@ -43,27 +50,33 @@ void Game::init(const char* title, const int x_pos, const int y_pos, const bool 
 
 	create_map();
 	create_gui();
-
-	load_entities();
-
-	create_entities();
+	
+	entitiy_manager_ = new EntitiyManager();
+	entitiy_manager_->init();
 }
 
 void Game::update()
 {
-	calculate_time();
+	if(!game_over_)
+	{
+		calculate_time();
 
-	update_entities();
-	
-	check_collisions();
-	
-	player->update(); //if position of player was changed due to detected collisions apply the changes
-	
-	fps_counter();
-	
-	gui->update_info(world_time_, fps_);
-	
-	frames_++;
+		entitiy_manager_->update();
+
+		check_collisions();
+
+		EntitiyManager::player->update(); //if position of player was changed due to detected collisions apply the changes
+
+		fps_counter();
+
+		gui->update_info(world_time_, fps_, EntitiyManager::player->health());
+
+		frames_++;
+	}
+	else if(game_over_)
+	{
+		gui->update_menu();
+	}
 }
 
 void Game::render()
@@ -71,10 +84,11 @@ void Game::render()
 	SDL_RenderClear(Global::renderer);
 
 	map->render();
-	gui->render();
 
 	render_spots();
-	render_entities();
+	entitiy_manager_->render();
+	
+	gui->render();
 
 	SDL_RenderPresent(Global::renderer);
 }
@@ -88,6 +102,8 @@ void Game::clean()
 	
 	SDL_DestroyTexture(gui->get_texture_text());
 
+	SDL_DestroyTexture(gui->get_menu_texture());
+
 	SDL_DestroyTexture(map->get_texture());
 
 	SDL_DestroyRenderer(Global::renderer);
@@ -99,9 +115,9 @@ void Game::clean()
 	
 	delete gui;
 	delete map;
-
 	
-	destroy_entities();
+	entitiy_manager_->destroy();
+	delete entitiy_manager_;
 	
 
 	SDL_Quit();
@@ -117,10 +133,12 @@ void Game::handle_events()
 	switch (event.type) {
 	case SDL_KEYDOWN:
 		if (event.key.keysym.sym == SDLK_ESCAPE) is_running_ = false;
-		else if (event.key.keysym.sym == SDLK_UP) EventHandler::move_up(player, map);
-		else if (event.key.keysym.sym == SDLK_DOWN) EventHandler::move_down(player, map);
-		else if (event.key.keysym.sym == SDLK_LEFT) EventHandler::move_left(player, map);
-		else if (event.key.keysym.sym == SDLK_RIGHT) EventHandler::move_right(player, map);
+		else if (event.key.keysym.sym == SDLK_UP) EventHandler::move_up(map);
+		else if (event.key.keysym.sym == SDLK_DOWN) EventHandler::move_down(map);
+		else if (event.key.keysym.sym == SDLK_LEFT) EventHandler::move_left(map);
+		else if (event.key.keysym.sym == SDLK_RIGHT) EventHandler::move_right(map);
+		else if (event.key.keysym.sym == SDLK_y) EventHandler::quit_game(&is_running_);
+		else if (event.key.keysym.sym == SDLK_n) EventHandler::restart_game(&game_over_);
 		break;
 
 	case SDL_KEYUP:
@@ -180,117 +198,30 @@ void Game::create_map()
 
 void Game::set_renderer_conf()
 {
-	SDL_SetRenderDrawColor(Global::renderer, 0, 0, 255, 255);
+	SDL_SetRenderDrawColor(Global::renderer, 0, 0, 0, 255);
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 	SDL_RenderSetLogicalSize(Global::renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-void Game::create_cars()
-{
-	cars = (GameObject**)malloc(cars_amt_ * sizeof(GameObject*));
-	
-	for (int i = 0; i < cars_amt_; i++)
-	{
-		cars[i] = new GameObject(&cars_s_[i]);
-	}
-}
-
-void Game::load_entities()
-{
-	player_s_ = (game_object*)malloc(sizeof(game_object));
-	*player_s_ = { 32 * 7 , 32 * 12 + 16, 32, 32,  "assets/frogger.png", 0 };
-
-	cars_amt_ = 14;
-	cars_s_ = (game_object*)malloc(cars_amt_ * sizeof(game_object));
-	cars_s_[0] = { SCREEN_WIDTH * 0, 11 * 32 + 16, 32, 32, "assets/car_1.png", -1.5 };
-	cars_s_[1] = { SCREEN_WIDTH / 2, 11 * 32 + 16, 32, 32, "assets/car_1.png", -1.5 };
-	cars_s_[2] = { SCREEN_WIDTH * 1, 11 * 32 + 16, 32, 32, "assets/car_1.png", -1.5 };
-	cars_s_[3] = { SCREEN_WIDTH * 3 / 2, 11 * 32 + 16, 32, 32, "assets/car_1.png", -1.5 };
-	cars_s_[5] = { SCREEN_WIDTH * 0, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
-	cars_s_[6] = { SCREEN_WIDTH * 2 / 3, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
-	cars_s_[7] = { SCREEN_WIDTH * 2 * 2 / 3, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
-	cars_s_[8] = { SCREEN_WIDTH / 2, 9 * 32 + 16, 32, 32, "assets/car_2.png", -1 };
-	cars_s_[9] = { SCREEN_WIDTH * 1, 9 * 32 + 16, 32, 32, "assets/car_2.png", -1 };
-	cars_s_[10] = { SCREEN_WIDTH * 3 / 2, 9 * 32 + 16, 32, 32, "assets/car_2.png", -1 };
-	cars_s_[11] = { SCREEN_WIDTH * 0, 9 * 32 + 16, 32, 32, "assets/car_2.png", -1 };
-	cars_s_[12] = { SCREEN_WIDTH * 1, 8 * 32 + 16, 32, 32, "assets/car_3.png", 8 };
-	cars_s_[13] = { SCREEN_WIDTH * 0, 7 * 32 + 16, 64, 32, "assets/car_5.png", -0.5 };
-	cars_s_[4] = { SCREEN_WIDTH * 1, 7 * 32 + 16, 64, 32, "assets/car_5.png", -0.5 };
-
-	logs_amt_ = 13;
-	logs_s_ = (game_object*)malloc(logs_amt_ * sizeof(game_object));
-	logs_s_[0] = { SCREEN_WIDTH * 0, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
-	logs_s_[1] = { SCREEN_WIDTH * 1 / 2, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
-	logs_s_[2] = { SCREEN_WIDTH * 1 / 1, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
-	logs_s_[3] = { SCREEN_WIDTH * 3 / 2, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
-	logs_s_[4] = { SCREEN_WIDTH * (-1) / 2, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
-	logs_s_[5] = { SCREEN_WIDTH * 0, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1 };
-	logs_s_[6] = { SCREEN_WIDTH * 8 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1 };
-	logs_s_[7] = { SCREEN_WIDTH * 16 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1 };
-	logs_s_[8] = { SCREEN_WIDTH * 24 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1 };
-	logs_s_[9] = { SCREEN_WIDTH * 0, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 0.5 };
-	logs_s_[10] = { SCREEN_WIDTH * 3 / 4, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 0.5 };
-	logs_s_[11] = { SCREEN_WIDTH * 5 / 4, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 0.5 };
-	logs_s_[12] = { SCREEN_WIDTH * 7 / 4, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 0.5 };
-
-	tortoises_amt_ = 16;
-	tortoises_s_ = (game_object*)malloc(tortoises_amt_ * sizeof(game_object));
-	tortoises_s_[0] = { SCREEN_WIDTH * 0, 32 * 5 + 16, 32 * 3,32,"assets/tortoise_3.png", -1 };
-	tortoises_s_[1] = { SCREEN_WIDTH * 4 / 14, 32 * 5 + 16, 32 * 3,32,"assets/tortoise_3.png", -1 };
-	tortoises_s_[2] = { SCREEN_WIDTH * 8 / 14, 32 * 5 + 16, 32 * 3,32,"assets/tortoise_3.png", -1 };
-	tortoises_s_[3] = { SCREEN_WIDTH * 12 / 14, 32 * 5 + 16, 32 * 3,32,"assets/tortoise_3.png", -1 };
-	tortoises_s_[4] = { SCREEN_WIDTH * 16 / 14, 32 * 5 + 16, 32 * 3,32,"assets/tortoise_3.png", -1 };
-	tortoises_s_[5] = { SCREEN_WIDTH * 20 / 14, 32 * 5 + 16, 32 * 3,32,"assets/tortoise_3.png", -1 };
-	tortoises_s_[6] = { SCREEN_WIDTH * 24 / 14, 32 * 5 + 16, 32 * 3,32,"assets/tortoise_3.png", -1 };
-	tortoises_s_[7] = { SCREEN_WIDTH * 28 / 14, 32 * 5 + 16, 32 * 3,32,"assets/tortoise_3.png", -1 };
-	tortoises_s_[8] = { SCREEN_WIDTH * 0 / 14, 32 * 2 + 16, 32 * 2,32,"assets/tortoise_2.png", -1 };
-	tortoises_s_[9] = { SCREEN_WIDTH * 3 / 14, 32 * 2 + 16, 32 * 2,32,"assets/tortoise_2.png", -1 };
-	tortoises_s_[10] = { SCREEN_WIDTH * 6 / 14, 32 * 2 + 16, 32 * 2,32,"assets/tortoise_2.png", -1 };
-	tortoises_s_[11] = { SCREEN_WIDTH * 9 / 14, 32 * 2 + 16, 32 * 2,32,"assets/tortoise_2.png", -1 };
-	tortoises_s_[12] = { SCREEN_WIDTH * 16 / 14, 32 * 2 + 16, 32 * 2,32,"assets/tortoise_2.png", -1 };
-	tortoises_s_[13] = { SCREEN_WIDTH * 19 / 14, 32 * 2 + 16, 32 * 2,32,"assets/tortoise_2.png", -1 };
-	tortoises_s_[14] = { SCREEN_WIDTH * 22 / 14, 32 * 2 + 16, 32 * 2,32,"assets/tortoise_2.png", -1 };
-	tortoises_s_[15] = { SCREEN_WIDTH * 25 / 14, 32 * 2 + 16, 32 * 2,32,"assets/tortoise_2.png", -1 };
-}
-
-void Game::create_player()
-{
-	player = new Player(player_s_);
-}
-void Game::create_logs()
-{
-	logs = (GameObject**)malloc(logs_amt_ * sizeof(GameObject*));
-	
-	for (int i = 0; i < logs_amt_; i++)
-	{
-		logs[i] = new GameObject(&logs_s_[i]);
-	}
-}
-
-void Game::create_tortoises()
-{
-	tortoises = (Tortoise**)malloc(tortoises_amt_ * sizeof(Tortoise*));
-
-	for (int i = 0; i < tortoises_amt_; i++)
-	{
-		tortoises[i] = new Tortoise(&tortoises_s_[i]);
-	}
-}
-
 void Game::fail()
 {
-	player->set_x(player_s_->x);
-	player->set_y(player_s_->y);
+	EntitiyManager::player->lost();
+	EntitiyManager::player->set_x(EntitiyManager::player_s->x);
+	EntitiyManager::player->set_y(EntitiyManager::player_s->y);
+
+	if(!EntitiyManager::player->is_alive())
+	{
+		game_over_ = true;
+	}
 }
 
 void Game::success()
 {
-	player->set_x(player_s_->x);
-	player->set_y(player_s_->y);
+	EntitiyManager::player->set_x(EntitiyManager::player_s->x);
+	EntitiyManager::player->set_y(EntitiyManager::player_s->y);
 
 	if(check_if_won())
 	{
-		printf("You won!");
 	}
 }
 
@@ -309,7 +240,7 @@ bool Game::check_if_won()
 
 void Game::check_collisions()
 {
-	const int spot = CollisionDetector::check_collisions_spots(player);
+	const int spot = CollisionDetector::check_collisions_spots();
 	if (spot != -1)
 	{
 		if (spots_[spot] == 1)
@@ -323,35 +254,15 @@ void Game::check_collisions()
 		}
 	}
 
-	CollisionDetector::check_collisions_water(player, logs, logs_amt_, tortoises, tortoises_amt_);
-	if (CollisionDetector::check_collisions_car(player, cars, cars_amt_))
+	CollisionDetector::check_collisions_water();
+	if (CollisionDetector::check_collisions_car())
 	{
 		fail();
 	}
 
-	if (CollisionDetector::check_collision_border(player))
+	if (CollisionDetector::check_collision_border())
 	{
 		fail();
-	}
-}
-
-void Game::update_entities()
-{
-	player->update();
-	
-	for (int i = 0; i < cars_amt_; i++)
-	{
-		cars[i]->update();
-	}
-
-	for (int i = 0; i < logs_amt_; i++)
-	{
-		logs[i]->update();
-	}
-
-	for (int i = 0; i < tortoises_amt_; i++)
-	{
-		tortoises[i]->update();
 	}
 }
 
@@ -428,24 +339,6 @@ bool Game::sdl_initialization(const char* title, const int x_pos, const int y_po
 	}						
 }
 
-void Game::render_entities()
-{
-	for (int i = 0; i < cars_amt_; i++)
-	{
-		cars[i]->render();
-	}
-	for (int i = 0; i < logs_amt_; i++)
-	{
-		logs[i]->render();
-	}
-	for (int i = 0; i < tortoises_amt_; i++)
-	{
-		tortoises[i]->render();
-	}
-
-	player->render();
-}
-
 void Game::render_spots()
 {
 	for (int i = 0; i < spots_amt_; i++)
@@ -457,52 +350,7 @@ void Game::render_spots()
 			temp.y = 16;
 			temp.w = 32;
 			temp.h = 32;
-			SDL_RenderCopy(Global::renderer, player->get_texture(), &(player->get_src_rect()), &temp);
+			SDL_RenderCopy(Global::renderer, EntitiyManager::player->get_texture(), &(EntitiyManager::player->get_src_rect()), &temp);
 		}
 	}
-}
-
-void Game::destroy_entities()
-{
-	SDL_DestroyTexture(player->get_texture());
-	
-	for (int i = 0; i < cars_amt_; i++)
-	{
-		SDL_DestroyTexture(cars[i]->get_texture());
-	}
-	for (int i = 0; i < logs_amt_; i++)
-	{
-		SDL_DestroyTexture(logs[i]->get_texture());
-	}
-	for (int i = 0; i < tortoises_amt_; i++)
-	{
-		SDL_DestroyTexture(tortoises[i]->get_texture());
-	}
-
-	delete player;
-	for (int i = 0; i < cars_amt_; i++)
-	{
-		delete cars[i];
-	}
-	for (int i = 0; i < logs_amt_; i++)
-	{
-		delete logs[i];
-	}
-	for (int i = 0; i < tortoises_amt_; i++)
-	{
-		delete tortoises[i];
-	}
-
-	free(player_s_);
-	free(cars_s_);
-	free(logs_s_);
-	free(tortoises_s_);
-}
-
-void Game::create_entities()
-{
-	player = new Player(player_s_);
-	create_cars();
-	create_logs();
-	create_tortoises();
 }

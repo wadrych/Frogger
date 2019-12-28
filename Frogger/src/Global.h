@@ -10,6 +10,14 @@
 #define X_CHUNKS 14
 #define Y_CHUNKS 13
 
+typedef struct game_object
+{
+	int x, y;
+	int w, h;
+	const char* path;
+	double v;
+} game_object;
+
 class Global
 {
 public:

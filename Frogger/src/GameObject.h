@@ -3,14 +3,6 @@
 #include "Global.h"
 #include "TextureManager.h"
 
-typedef struct game_object
-{
-	int x, y;
-	int w, h;
-	const char* path;
-	double v;
-} game_object;
-
 class GameObject
 {
 public:
