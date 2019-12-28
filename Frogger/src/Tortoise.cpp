@@ -22,6 +22,7 @@ Tortoise::~Tortoise()
 void Tortoise::update()
 {
 	double distance = get_x() + velocity;
+	
 	if (distance > street)
 	{
 		distance = -SCREEN_WIDTH / X_CHUNKS * 6; // 6- cause log is max 6 tiles
@@ -34,7 +35,7 @@ void Tortoise::update()
 
 	if(diving)
 	{
-		delta += Global::time;
+		delta += Global::time_delta;
 		if(delta >= 1000)
 		{
 			visible = !visible;
