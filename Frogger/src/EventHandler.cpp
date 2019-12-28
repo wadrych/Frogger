@@ -50,11 +50,18 @@ void EventHandler::quit_game(bool* is_running)
 	*is_running = false;
 }
 
-void EventHandler::restart_game(bool* game_over)
+void EventHandler::restart_game(bool* game_over, int spots[], EntitiyManager* entity_manager, double* world_time)
 {
 	Player* p = EntitiyManager::player;
 	
 	p->init();
 	*game_over = false;
+	*world_time = 0;
+	for(int i = 0; i < 5; i++)
+	{
+		spots[i] = 0;
+	}
+	entity_manager->destroy();
+	entity_manager->init();
 }
 

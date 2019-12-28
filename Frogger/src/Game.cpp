@@ -138,7 +138,7 @@ void Game::handle_events()
 		else if (event.key.keysym.sym == SDLK_LEFT) EventHandler::move_left(map);
 		else if (event.key.keysym.sym == SDLK_RIGHT) EventHandler::move_right(map);
 		else if (event.key.keysym.sym == SDLK_y) EventHandler::quit_game(&is_running_);
-		else if (event.key.keysym.sym == SDLK_n) EventHandler::restart_game(&game_over_);
+		else if (event.key.keysym.sym == SDLK_n) EventHandler::restart_game(&game_over_, spots_, entitiy_manager_, &world_time_);
 		break;
 
 	case SDL_KEYUP:
