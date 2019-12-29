@@ -40,6 +40,7 @@ void Game::init(const char* title, const int x_pos, const int y_pos, const bool 
 	game_over_ = false;
 	paused_ = false;
 	quit_ = false;
+	score_ = 0;
 	
 	srand(time(NULL));
 	
@@ -55,6 +56,8 @@ void Game::init(const char* title, const int x_pos, const int y_pos, const bool 
 	
 	entitiy_manager_ = new EntitiyManager();
 	entitiy_manager_->init();
+
+	last_position_ = (int)EntitiyManager::player->get_y();
 }
 
 void Game::update()
@@ -72,7 +75,7 @@ void Game::update()
 
 		fps_counter();
 
-		gui->update_info(world_time_, fps_, EntitiyManager::player->health());
+		gui->update_info(world_time_, fps_, EntitiyManager::player->health(), score_);
 
 		frames_++;
 	}
@@ -114,6 +117,8 @@ void Game::clean()
 	SDL_DestroyTexture(gui->get_texture_text());
 
 	SDL_DestroyTexture(gui->get_menu_texture());
+
+	SDL_DestroyTexture(gui->get_menu_text_texture());
 
 	SDL_DestroyTexture(map->get_texture());
 
@@ -160,6 +165,8 @@ void Game::handle_events()
 				EventHandler::restart_game(&game_over_, spots_, entitiy_manager_, &world_time_);
 				gui->clean_menu();
 				last_frame_time_ = SDL_GetTicks();
+				last_position_= (int)EntitiyManager::player->get_y();
+				score_ = 0;
 			}
 		}
 		else if (event.key.keysym.sym == SDLK_p && !game_over_ && !quit_)
@@ -213,7 +220,7 @@ void Game::calculate_time()
 	delta_ = Global::time_delta * to_seconds;
 	last_frame_time_ = current_frame_time_;
 
-	world_time_ += delta_;
+	world_time_ += delta_*5;
 }
 
 void Game::create_gui()
@@ -238,6 +245,14 @@ void Game::set_renderer_conf()
 
 void Game::fail()
 {
+	const int current_position = (int)EntitiyManager::player->get_y();
+
+	if(last_position_ > current_position)
+	{
+		score_ += 10;
+		last_position_ = current_position;
+	}
+	
 	EntitiyManager::player->lost();
 	EntitiyManager::player->set_x(EntitiyManager::player_s->x);
 	EntitiyManager::player->set_y(EntitiyManager::player_s->y);
@@ -251,9 +266,14 @@ void Game::fail()
 
 void Game::success()
 {
+	const int game_time = 50;
+	
 	EntitiyManager::player->set_x(EntitiyManager::player_s->x);
 	EntitiyManager::player->set_y(EntitiyManager::player_s->y);
-
+	
+	score_ += 50 + (int)((game_time-world_time_) * 10);
+	world_time_ = 0;
+	
 	if(check_if_won())
 	{
 		

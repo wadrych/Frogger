@@ -14,14 +14,14 @@ void UserInterface::init(const int surface_height, const int surface_width, cons
 	this->surface_width_ = surface_width;
 	
 	dest_r_.w = surface_width;
-	dest_r_.h = surface_height;
+	dest_r_.h = surface_height - 2;
 	dest_r_.x = 0;
 	dest_r_.y = window_height - surface_height;
 
 	dest_r_bar_.w = surface_width / 4;
 	dest_r_bar_.h = surface_height - 2;
 	dest_r_bar_.x = 0;
-	dest_r_bar_.y = dest_r_.y;
+	dest_r_bar_.y = window_height - surface_height;
 
 	dest_r_menu_.w = surface_width - 40;
 	dest_r_menu_.h = window_height - 100;
@@ -30,41 +30,25 @@ void UserInterface::init(const int surface_height, const int surface_width, cons
 }
 
 
-void  UserInterface::update_info(double world_time, double fps, int player_health)
+void  UserInterface::update_info(double world_time, double fps, int player_health, int score)
 {	
 	SDL_DestroyTexture(bar_text_);
+	SDL_DestroyTexture(container_);
 	
 	char text[128];
-
-	SDL_Rect health_bar;
-
-	const int health_bar_pixels = 100;
-	const int game_time = 50;
 	
-	health_bar.w = health_bar_pixels * (int)(world_time / game_time);
-	health_bar.x = SCREEN_WIDTH - health_bar.w;
-	health_bar.y = 0;
-	health_bar.h = dest_r_bar_.h;
-
-	SDL_SetRenderDrawColor(Global::renderer, 255, 255, 0, 255);
-	SDL_Texture* temp;
-	temp = SDL_GetRenderTarget(Global::renderer);
-	SDL_SetRenderTarget(Global::renderer, container_);
-	SDL_RenderDrawRect(Global::renderer, &health_bar);
-	SDL_RenderPresent(Global::renderer);
-	SDL_SetRenderDrawColor(Global::renderer, 0, 0, 0, 255);
-	SDL_SetRenderTarget(Global::renderer, temp);
-	SDL_DestroyTexture(temp);
-
-	sprintf(text, "Health %2i", player_health);
+	sprintf(text, "Health %2i Score %4i", player_health,score);
 	SDL_Surface* text_surface = TTF_RenderText_Solid(Global::font, text, { 255,255,255 });
 
+	SDL_Surface* temp = create_time_bar(world_time);
+	
 	if (text_surface == NULL)
 	{
 		printf("Unable to create TTF surface ! TTF Error: %s\n", TTF_GetError());
 	}
 	else
 	{
+		container_ = SDL_CreateTextureFromSurface(Global::renderer, temp);
 		bar_text_ = SDL_CreateTextureFromSurface(Global::renderer, text_surface);
 		if(bar_text_ == NULL)
 		{
@@ -72,7 +56,41 @@ void  UserInterface::update_info(double world_time, double fps, int player_healt
 		}
 		SDL_FreeSurface(text_surface);
 	}
+	SDL_FreeSurface(temp);
+
 }
+
+SDL_Surface* UserInterface::create_time_bar(double world_time)
+{
+	const int health_bar_pixels = 200;
+	const int game_time = 50;
+
+	dest_r_.w = (int)(health_bar_pixels * (1 - (world_time / game_time)));
+
+	//prevention against rect with 0 width
+	if (dest_r_.w == 0)
+	{
+		dest_r_.w = 1;
+	}
+
+	dest_r_.x = SCREEN_WIDTH - dest_r_.w;
+
+	SDL_Surface* temp = SDL_CreateRGBSurface(0, dest_r_.w, dest_r_.h, 32,
+		0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+
+	Uint32 outline = SDL_MapRGB(temp->format, 0x00, 0x00, 0x00);
+	Uint32 fill = SDL_MapRGB(temp->format, 0xFF, 0xFF, 0x00);
+
+	if (world_time >= 40 && world_time < 50)
+	{
+		fill = SDL_MapRGB(temp->format, 0xFF, 0x00, 0x00);
+	}
+
+	TextureManager::draw_rectangle(temp, 0, 0, dest_r_.w, dest_r_.h, outline, fill);
+
+	return temp;
+}
+
 
 SDL_Texture* UserInterface::get_texture()
 {
@@ -83,8 +101,8 @@ void UserInterface::render()
 {
 
 	SDL_RenderCopy(Global::renderer, container_, NULL, &dest_r_);
+	SDL_RenderCopy(Global::renderer, bar_text_, NULL, &dest_r_bar_);
 	SDL_RenderCopy(Global::renderer, menu_container_, NULL, &dest_r_menu_);
-	bSDL_RenderCopy(Global::renderer, bar_text_, NULL, &dest_r_bar_);
 	SDL_RenderCopy(Global::renderer, menu_text_, NULL, &dest_r_text_);
 }
 
@@ -172,4 +190,9 @@ void UserInterface::show_text(const char* text)
 		}
 		SDL_FreeSurface(temp_surface);
 	}
+}
+
+SDL_Texture* UserInterface::get_menu_text_texture()
+{
+	return bar_text_;
 }

@@ -50,6 +50,9 @@ private:
 	int spots_[5];
 	int spots_amt_;
 
+	int score_;
+	int last_position_;
+
 	bool sdl_initialization(const char* title, const int x_pos, const int y_pos, const bool fullscreen);
 	void fps_counter();
 	void calculate_time();
