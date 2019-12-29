@@ -61,5 +61,5 @@ private:
 	bool check_if_won();
 	void check_collisions();
 	void render_spots();
-	bool check_if_lost();
+	void check_time();
 };

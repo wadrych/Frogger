@@ -62,6 +62,7 @@ void Game::update()
 	if(!game_over_ && !paused_ && !quit_)
 	{
 		calculate_time();
+		check_time();
 
 		entitiy_manager_->update();
 
@@ -157,10 +158,20 @@ void Game::handle_events()
 			else
 			{
 				EventHandler::restart_game(&game_over_, spots_, entitiy_manager_, &world_time_);
+				gui->clean_menu();
+				last_frame_time_ = SDL_GetTicks();
 			}
 		}
-		else if (event.key.keysym.sym == SDLK_p && !game_over_ && !quit_) EventHandler::pause_game(&paused_);
-		else if (event.key.keysym.sym == SDLK_q && !game_over_ && !paused_) EventHandler::quit_menu(&quit_);
+		else if (event.key.keysym.sym == SDLK_p && !game_over_ && !quit_)
+		{
+			EventHandler::pause_game(&paused_);
+			gui->clean_menu();
+		}
+		else if (event.key.keysym.sym == SDLK_q && !game_over_ && !paused_)
+		{
+			EventHandler::quit_menu(&quit_);
+			gui->clean_menu();
+		}
 		break;
 
 	case SDL_KEYUP:
@@ -235,6 +246,7 @@ void Game::fail()
 	{
 		game_over_ = true;
 	}
+	world_time_ = 0;
 }
 
 void Game::success()
@@ -244,9 +256,9 @@ void Game::success()
 
 	if(check_if_won())
 	{
+		
 	}
 }
-
 
 bool Game::check_if_won()
 {
@@ -374,5 +386,15 @@ void Game::render_spots()
 			temp.h = 32;
 			SDL_RenderCopy(Global::renderer, EntitiyManager::player->get_texture(), &(EntitiyManager::player->get_src_rect()), &temp);
 		}
+	}
+}
+
+void Game::check_time()
+{
+	const double game_time = 50;
+
+	if(world_time_ > game_time)
+	{
+		fail();
 	}
 }

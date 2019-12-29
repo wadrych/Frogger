@@ -24,6 +24,7 @@ public:
 	void update_menu(menu_mode mode);
 	void render();
 	void show_text(const char* text);
+	void clean_menu();
 	
 	SDL_Texture* get_texture();
 	SDL_Texture* get_texture_text();
@@ -31,7 +32,8 @@ public:
 	
 private:
 	SDL_Texture* container_;
-	SDL_Texture* text_container_;
+	SDL_Texture* menu_text_;
+	SDL_Texture* bar_text_;
 	SDL_Texture* menu_container_;
 	SDL_Rect src_r_;
 	SDL_Rect dest_r_;
@@ -39,6 +41,8 @@ private:
 	SDL_Rect dest_r_text_;
 	SDL_Rect src_r_menu_;
 	SDL_Rect dest_r_menu_;
+	SDL_Rect src_r_bar_;
+	SDL_Rect dest_r_bar_;
 	
 	
 	int surface_height_;
