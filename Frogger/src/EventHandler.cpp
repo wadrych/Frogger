@@ -65,3 +65,12 @@ void EventHandler::restart_game(bool* game_over, int spots[], EntitiyManager* en
 	entity_manager->init();
 }
 
+void EventHandler::pause_game(bool* paused)
+{
+	*paused = !*paused;
+}
+
+void EventHandler::quit_menu(bool* quit)
+{
+	*quit = !*quit;
+}

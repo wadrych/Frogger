@@ -78,15 +78,44 @@ SDL_Texture* UserInterface::get_texture_text()
 	return text_container_;
 }
 
-void UserInterface::update_menu()
+void UserInterface::update_menu(menu_mode mode)
+{
+	if (mode == GAME_OVER)
+	{
+		dest_r_text_.w = dest_r_menu_.w - 200;
+		dest_r_text_.h = 25;
+		dest_r_text_.x = dest_r_menu_.x + 100;
+		dest_r_text_.y = dest_r_menu_.y + 160;
+		show_text("GAME OVER QUIT? Y/N");
+	}
+	else if (mode == PAUSE)
+	{
+		dest_r_text_.w = dest_r_menu_.w - 300;
+		dest_r_text_.h = 25;
+		dest_r_text_.x = dest_r_menu_.x + 150;
+		dest_r_text_.y = dest_r_menu_.y + 160;
+		show_text("PAUSE");
+	}
+	else if (mode == QUIT)
+	{
+		dest_r_text_.w = dest_r_menu_.w - 300;
+		dest_r_text_.h = 25;
+		dest_r_text_.x = dest_r_menu_.x + 150;
+		dest_r_text_.y = dest_r_menu_.y + 160;
+		show_text("QUIT GAME? Y/N");
+	}
+	
+}
+
+SDL_Texture* UserInterface::get_menu_texture()
+{
+	return menu_container_;
+}
+
+void UserInterface::show_text(const char* text)
 {
 	SDL_DestroyTexture(menu_container_);
 	SDL_DestroyTexture(text_container_);
-
-	dest_r_text_.w = dest_r_menu_.w - 100;
-	dest_r_text_.h = dest_r_menu_.h - 300;
-	dest_r_text_.x = dest_r_menu_.x + 50;
-	dest_r_text_.y = dest_r_menu_.y + 150;
 
 	SDL_Surface* temp_surface = SDL_CreateRGBSurface(0, dest_r_menu_.w, dest_r_menu_.h, 32,
 		0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
@@ -96,13 +125,13 @@ void UserInterface::update_menu()
 	}
 	else
 	{
-		char text[128];
+		char text_buffer[128];
 		const Uint32 line_color = SDL_MapRGB(temp_surface->format, 0xFF, 0x00, 0x00);
 		const Uint32 container_color = SDL_MapRGB(temp_surface->format, 0x00, 0x00, 0x00);
 
 		TextureManager::draw_rectangle(temp_surface, 0, 0, dest_r_menu_.w, dest_r_menu_.h, line_color, container_color);
-		
-		sprintf(text, "GAME OVER Quit game? Y/N");
+
+		sprintf(text_buffer, text);
 		SDL_Surface* text_surface = TTF_RenderText_Solid(Global::font, text, { 255,255,255 });
 
 		if (text_surface == NULL)
@@ -121,9 +150,4 @@ void UserInterface::update_menu()
 		}
 		SDL_FreeSurface(temp_surface);
 	}
-}
-
-SDL_Texture* UserInterface::get_menu_texture()
-{
-	return menu_container_;
 }

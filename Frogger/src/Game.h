@@ -30,6 +30,8 @@ public:
 private:
 	bool is_running_;
 	bool game_over_;
+	bool paused_;
+	bool quit_;
 	SDL_Window* window_;
 	SDL_Texture* screen_;
 

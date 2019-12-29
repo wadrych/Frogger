@@ -5,6 +5,13 @@
 #include "Global.h"
 #include "TextureManager.h"
 
+enum menu_mode
+{
+	GAME_OVER,
+	PAUSE,
+	MENU,
+	QUIT
+};
 
 class UserInterface
 {
@@ -14,9 +21,9 @@ public:
 
 	void init(const int surface_height, const int surface_width, const int window_height);
 	void update_info(double world_time, double fps, int player_health);
-	void update_menu();
-	
+	void update_menu(menu_mode mode);
 	void render();
+	void show_text(const char* text);
 	
 	SDL_Texture* get_texture();
 	SDL_Texture* get_texture_text();

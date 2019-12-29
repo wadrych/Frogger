@@ -13,4 +13,6 @@ public:
 	static void move_up(Map* m);
 	static void quit_game(bool* is_running);
 	static void restart_game(bool* game_over, int spots[], EntitiyManager* entity_manager, double* world_time);
+	static void pause_game(bool* paused);
+	static void quit_menu(bool* quit);
 };

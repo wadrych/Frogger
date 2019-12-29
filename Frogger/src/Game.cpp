@@ -38,6 +38,8 @@ void Game::init(const char* title, const int x_pos, const int y_pos, const bool 
 	spots_[4] = 0;
 	spots_amt_ = 5;
 	game_over_ = false;
+	paused_ = false;
+	quit_ = false;
 	
 	srand(time(NULL));
 	
@@ -57,7 +59,7 @@ void Game::init(const char* title, const int x_pos, const int y_pos, const bool 
 
 void Game::update()
 {
-	if(!game_over_)
+	if(!game_over_ && !paused_ && !quit_)
 	{
 		calculate_time();
 
@@ -75,7 +77,15 @@ void Game::update()
 	}
 	else if(game_over_)
 	{
-		gui->update_menu();
+		gui->update_menu(GAME_OVER);
+	}
+	else if(paused_)
+	{
+		gui->update_menu(PAUSE);
+	}
+	else if(quit_)
+	{
+		gui->update_menu(QUIT);
 	}
 }
 
@@ -137,8 +147,20 @@ void Game::handle_events()
 		else if (event.key.keysym.sym == SDLK_DOWN) EventHandler::move_down(map);
 		else if (event.key.keysym.sym == SDLK_LEFT) EventHandler::move_left(map);
 		else if (event.key.keysym.sym == SDLK_RIGHT) EventHandler::move_right(map);
-		else if (event.key.keysym.sym == SDLK_y) EventHandler::quit_game(&is_running_);
-		else if (event.key.keysym.sym == SDLK_n) EventHandler::restart_game(&game_over_, spots_, entitiy_manager_, &world_time_);
+		else if (event.key.keysym.sym == SDLK_y && (game_over_ || quit_)) EventHandler::quit_game(&is_running_);
+		else if (event.key.keysym.sym == SDLK_n && (game_over_ || quit_))
+		{
+			if(quit_)
+			{
+				EventHandler::quit_menu(&quit_);
+			}
+			else
+			{
+				EventHandler::restart_game(&game_over_, spots_, entitiy_manager_, &world_time_);
+			}
+		}
+		else if (event.key.keysym.sym == SDLK_p && !game_over_ && !quit_) EventHandler::pause_game(&paused_);
+		else if (event.key.keysym.sym == SDLK_q && !game_over_ && !paused_) EventHandler::quit_menu(&quit_);
 		break;
 
 	case SDL_KEYUP:
@@ -321,7 +343,7 @@ bool Game::sdl_initialization(const char* title, const int x_pos, const int y_po
 					else
 					{
 						printf("SDL_ttf initialized!\n");
-						Global::font = TTF_OpenFont("../../TTF/UniversCondensed.ttf", 28);
+						Global::font = TTF_OpenFont("../../TTF/UniversCondensed.ttf", 100);
 						if (Global::font == NULL)
 						{
 							printf("Font could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
