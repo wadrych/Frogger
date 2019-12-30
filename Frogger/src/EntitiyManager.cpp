@@ -44,10 +44,12 @@ void EntitiyManager::load()
 	logs_s[2] = { SCREEN_WIDTH * 1 / 1, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
 	logs_s[3] = { SCREEN_WIDTH * 3 / 2, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
 	logs_s[4] = { SCREEN_WIDTH * (-1) / 2, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
+
 	logs_s[5] = { SCREEN_WIDTH * 0, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1 };
 	logs_s[6] = { SCREEN_WIDTH * 8 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1 };
 	logs_s[7] = { SCREEN_WIDTH * 16 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1 };
 	logs_s[8] = { SCREEN_WIDTH * 24 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1 };
+
 	logs_s[9] = { SCREEN_WIDTH * 0, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 0.5 };
 	logs_s[10] = { SCREEN_WIDTH * 3 / 4, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 0.5 };
 	logs_s[11] = { SCREEN_WIDTH * 5 / 4, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 0.5 };

@@ -32,6 +32,7 @@ private:
 	bool game_over_;
 	bool paused_;
 	bool quit_;
+	bool main_menu_;
 	SDL_Window* window_;
 	SDL_Texture* screen_;
 
@@ -52,6 +53,8 @@ private:
 
 	int score_;
 	int last_position_;
+	option current_;
+	menu_mode mode_;
 
 	bool sdl_initialization(const char* title, const int x_pos, const int y_pos, const bool fullscreen);
 	void fps_counter();

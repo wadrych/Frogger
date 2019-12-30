@@ -41,6 +41,8 @@ void Game::init(const char* title, const int x_pos, const int y_pos, const bool 
 	paused_ = false;
 	quit_ = false;
 	score_ = 0;
+	main_menu_ = false;
+	current_ = NEW_GAME;
 	
 	srand(time(NULL));
 	
@@ -62,7 +64,11 @@ void Game::init(const char* title, const int x_pos, const int y_pos, const bool 
 
 void Game::update()
 {
-	if(!game_over_ && !paused_ && !quit_)
+	if(current_ == NEW_GAME)
+	{
+		
+	}
+	if(current_ == GAME)//!game_over_ && !paused_ && !quit_ && !main_menu_)
 	{
 		calculate_time();
 		check_time();
@@ -79,17 +85,9 @@ void Game::update()
 
 		frames_++;
 	}
-	else if(game_over_)
+	else
 	{
-		gui->update_menu(GAME_OVER);
-	}
-	else if(paused_)
-	{
-		gui->update_menu(PAUSE);
-	}
-	else if(quit_)
-	{
-		gui->update_menu(QUIT);
+		gui->update_menu(current_);
 	}
 }
 
@@ -112,13 +110,7 @@ void Game::clean()
 	SDL_DestroyTexture(screen_);
 	screen_ = NULL;
 
-	SDL_DestroyTexture(gui->get_texture());
-	
-	SDL_DestroyTexture(gui->get_texture_text());
-
-	SDL_DestroyTexture(gui->get_menu_texture());
-
-	SDL_DestroyTexture(gui->get_menu_text_texture());
+	gui->destroy();
 
 	SDL_DestroyTexture(map->get_texture());
 
@@ -149,34 +141,74 @@ void Game::handle_events()
 	switch (event.type) {
 	case SDL_KEYDOWN:
 		if (event.key.keysym.sym == SDLK_ESCAPE) is_running_ = false;
-		else if (event.key.keysym.sym == SDLK_UP) EventHandler::move_up(map);
-		else if (event.key.keysym.sym == SDLK_DOWN) EventHandler::move_down(map);
-		else if (event.key.keysym.sym == SDLK_LEFT) EventHandler::move_left(map);
-		else if (event.key.keysym.sym == SDLK_RIGHT) EventHandler::move_right(map);
-		else if (event.key.keysym.sym == SDLK_y && (game_over_ || quit_)) EventHandler::quit_game(&is_running_);
-		else if (event.key.keysym.sym == SDLK_n && (game_over_ || quit_))
+		else if (event.key.keysym.sym == SDLK_UP)
 		{
-			if(quit_)
+			if(current_ == NEW_GAME || current_ == HIGH_SCORES || current_ == QUIT_GAME)
 			{
-				EventHandler::quit_menu(&quit_);
+				EventHandler::menu_up(&current_);
 			}
-			else
+			else if (current_ == GAME)
 			{
-				EventHandler::restart_game(&game_over_, spots_, entitiy_manager_, &world_time_);
+				EventHandler::move_up(map);
+			}
+		}
+		else if (event.key.keysym.sym == SDLK_DOWN && (!game_over_ && !quit_ && !paused_))
+		{
+			if (current_ == NEW_GAME || current_ == HIGH_SCORES || current_ == QUIT_GAME)
+			{
+				EventHandler::menu_down(&current_);
+			}
+			else if(current_ == GAME)
+			{
+				EventHandler::move_down(map);
+			}
+		}
+		else if (event.key.keysym.sym == SDLK_LEFT && current_ == GAME) EventHandler::move_left(map);
+		else if (event.key.keysym.sym == SDLK_RIGHT && current_ ==  GAME) EventHandler::move_right(map);
+		else if (event.key.keysym.sym == SDLK_y)
+		{
+			if(current_ == GAME_OVER)
+			{
+				EventHandler::quit_game(&is_running_);
+			}
+			else if (current_ == QUIT)
+			{
+				current_ = NEW_GAME;
+			}
+		}
+		else if (event.key.keysym.sym == SDLK_n)
+		{
+			if(current_ == QUIT)
+			{
+				EventHandler::quit_menu(&current_);
+				last_frame_time_ = SDL_GetTicks();
+				gui->clean_menu();
+			}
+			else if(current_ == GAME_OVER)
+			{
+				EventHandler::restart_game(&current_, spots_, entitiy_manager_, &world_time_, &score_);
 				gui->clean_menu();
 				last_frame_time_ = SDL_GetTicks();
 				last_position_= (int)EntitiyManager::player->get_y();
 				score_ = 0;
 			}
 		}
-		else if (event.key.keysym.sym == SDLK_p && !game_over_ && !quit_)
+		else if (event.key.keysym.sym == SDLK_p && ( current_ == GAME || current_ == PAUSE))
 		{
-			EventHandler::pause_game(&paused_);
+			last_frame_time_ = SDL_GetTicks();
+			EventHandler::pause_game(&current_);
 			gui->clean_menu();
 		}
-		else if (event.key.keysym.sym == SDLK_q && !game_over_ && !paused_)
+		else if (event.key.keysym.sym == SDLK_q && (current_ == GAME || current_ == QUIT))
 		{
-			EventHandler::quit_menu(&quit_);
+			EventHandler::quit_menu(&current_);
+			last_frame_time_ = SDL_GetTicks();
+			gui->clean_menu();
+		}
+		else if (event.key.keysym.sym == SDLK_RETURN)
+		{
+			EventHandler::menu_launch(&current_, &is_running_);
+			EventHandler::restart_game(&current_, spots_, entitiy_manager_, &world_time_, &score_);
 			gui->clean_menu();
 		}
 		break;
@@ -259,7 +291,7 @@ void Game::fail()
 
 	if(!EntitiyManager::player->is_alive())
 	{
-		game_over_ = true;
+		current_ = GAME_OVER;
 	}
 	world_time_ = 0;
 }

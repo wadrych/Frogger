@@ -1,4 +1,5 @@
 #include "EventHandler.h"
+#include "Game.h"
 
 
 void EventHandler::move_right(Map* m)
@@ -50,12 +51,14 @@ void EventHandler::quit_game(bool* is_running)
 	*is_running = false;
 }
 
-void EventHandler::restart_game(bool* game_over, int spots[], EntitiyManager* entity_manager, double* world_time)
+void EventHandler::restart_game(option* current, int spots[], EntitiyManager* entity_manager, double* world_time, int* score)
 {
 	Player* p = EntitiyManager::player;
 	
 	p->init();
-	*game_over = false;
+	
+	*score = 0;
+	*current = GAME;
 	*world_time = 0;
 	for(int i = 0; i < 5; i++)
 	{
@@ -63,14 +66,80 @@ void EventHandler::restart_game(bool* game_over, int spots[], EntitiyManager* en
 	}
 	entity_manager->destroy();
 	entity_manager->init();
+	
 }
 
-void EventHandler::pause_game(bool* paused)
+void EventHandler::pause_game(option* current)
 {
-	*paused = !*paused;
+	if(*current == PAUSE)
+	{
+		*current = GAME;
+	}
+	else if (*current == GAME)
+	{
+		*current = PAUSE;
+	}
 }
 
-void EventHandler::quit_menu(bool* quit)
+void EventHandler::quit_menu(option* current)
 {
-	*quit = !*quit;
+	if (*current == QUIT)
+	{
+		*current = GAME;
+	}
+	else if (*current == GAME)
+	{
+		*current = QUIT;
+	}
 }
+
+void EventHandler::menu_up(option* current)
+{
+	if(*current == NEW_GAME)
+	{
+		*current = QUIT_GAME;
+	}
+	else if(*current == HIGH_SCORES)
+	{
+		*current = NEW_GAME;
+	}
+	else if (*current == QUIT_GAME)
+	{
+		*current = HIGH_SCORES;
+	}
+}
+
+void EventHandler::menu_down(option* current)
+{
+	if (*current == NEW_GAME)
+	{
+		*current = HIGH_SCORES;
+	}
+	else if (*current == HIGH_SCORES)
+	{
+		*current = QUIT_GAME;
+	}
+	else if (*current == QUIT_GAME)
+	{
+		*current = NEW_GAME;
+	}
+}
+
+void EventHandler::menu_launch(option* current, bool* is_running)
+{
+	if(*current == NEW_GAME)
+	{
+		*current = GAME;
+	}
+	else if (*current == HIGH_SCORES)
+	{
+		//open highscores
+	}
+	else if (*current == QUIT_GAME)
+	{
+		quit_game(is_running);
+	}
+}
+
+
+
