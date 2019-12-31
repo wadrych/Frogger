@@ -156,43 +156,6 @@ void UserInterface::show_text(const char* text)
 
 	draw_rect_(&menu_container_, dest_r_menu_, false);
 	draw_text_(&menu_text_, text);
-
-
-	/*
-	SDL_Surface* temp_surface = SDL_CreateRGBSurface(0, dest_r_menu_.w, dest_r_menu_.h, 32,
-		0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-	if (temp_surface == NULL)
-	{
-		printf("Unable to create RGB surface! SDL Error: %s\n", SDL_GetError());
-	}
-	else
-	{
-		char text_buffer[128];
-		const Uint32 line_color = SDL_MapRGB(temp_surface->format, 0xFF, 0x00, 0x00);
-		const Uint32 container_color = SDL_MapRGB(temp_surface->format, 0x00, 0x00, 0x00);
-
-		TextureManager::draw_rectangle(temp_surface, 0, 0, dest_r_menu_.w, dest_r_menu_.h, line_color, container_color);
-
-		sprintf(text_buffer, text);
-		SDL_Surface* text_surface = TTF_RenderText_Solid(Global::font, text, { 255,255,255 });
-
-		if (text_surface == NULL)
-		{
-			printf("Unable to create TTF surface ! TTF Error: %s\n", TTF_GetError());
-		}
-		else
-		{
-			menu_container_ = SDL_CreateTextureFromSurface(Global::renderer, temp_surface);
-			menu_text_ = SDL_CreateTextureFromSurface(Global::renderer, text_surface);
-			if (menu_container_ == NULL || menu_text_ == NULL)
-			{
-				printf("Unable to create menu texture ! SDL Error: %s\n", SDL_GetError());
-			}
-			SDL_FreeSurface(text_surface);
-		}
-		SDL_FreeSurface(temp_surface);
-	}
-	*/
 }
 
 void UserInterface::update_main_menu(option current)
@@ -266,16 +229,25 @@ void UserInterface::destroy()
 	SDL_DestroyTexture(high_scores_text_);
 	SDL_DestroyTexture(quit_);
 	SDL_DestroyTexture(quit_text_);
+	SDL_DestroyTexture(bonus_);
 }
 
-void UserInterface::draw_text_(SDL_Texture** texture, const char* text)
+void UserInterface::draw_text_(SDL_Texture** texture, const char* text, bool wrap)
 {
 	SDL_DestroyTexture(*texture);
 	
-	char text_buffer[128];
+	char text_buffer[300];
 
 	sprintf(text_buffer, text);
-	SDL_Surface* text_surface = TTF_RenderText_Solid(Global::font, text, { 255,255,255 });
+	SDL_Surface* text_surface;
+	if(wrap)
+	{
+		text_surface = TTF_RenderText_Blended_Wrapped(Global::font, text, { 255,255,255 }, 700);//500
+	}
+	else
+	{
+		text_surface = TTF_RenderText_Solid(Global::font, text, { 255,255,255 });
+	}
 
 	if (text_surface == NULL)
 	{
@@ -304,8 +276,6 @@ void UserInterface::draw_rect_(SDL_Texture** texture, SDL_Rect tex_r, bool curre
 	}
 	else
 	{
-		char text_buffer[128];
-		
 		Uint32 line_color = SDL_MapRGB(temp_surface->format, 0x00, 0x00, 0xFF);
 		if(current)
 		{
@@ -322,4 +292,64 @@ void UserInterface::draw_rect_(SDL_Texture** texture, SDL_Rect tex_r, bool curre
 		}
 	}
 	SDL_FreeSurface(temp_surface);
+}
+
+void UserInterface::show_save_score(int score, char* name)
+{
+	dest_r_text_.w = dest_r_menu_.w - 50;
+	dest_r_text_.h = 150;
+	dest_r_text_.x = dest_r_menu_.x + 50;
+	dest_r_text_.y = dest_r_menu_.y + 80;
+	
+	clean_menu();
+
+	char text[128];
+	sprintf(text, "Your score %i  Enter your name: %s", score, name);
+	
+	draw_rect_(&menu_container_, dest_r_menu_, false);
+	draw_text_(&menu_text_, text, true);
+}
+
+void UserInterface::show_high_scores(result leaderboard[10], const int records_amt)
+{
+	clean_menu();
+	
+	new_game_t_r_.x = 30;
+	new_game_t_r_.y = game_name_r_.y + 75;
+	new_game_t_r_.w = 400;
+	new_game_t_r_.h = 250;
+	
+	draw_rect_(&main_menu_container_, menu_r_, false);
+	draw_text_(&game_name_, "HIGH SCORES");
+
+	char text[300] = "";
+	for(int i = 0; i < records_amt; i++)
+	{
+		char temp[30];
+		sprintf(temp, "%2i. %8s - %5i  ", i + 1, leaderboard[i].name, leaderboard[i].score);
+		
+		strcat(text, temp);
+	}
+	
+	draw_text_(&new_game_text_, text, true);
+}
+
+void UserInterface::show_bonus(SDL_Rect rect, int bonus)
+{
+	char buff[4] = "";
+	sprintf(buff, "%i", bonus);
+	
+	draw_text_(&bonus_, buff);
+
+	bonus_r_.w = 40;
+	bonus_r_.h = 10;
+	bonus_r_.x = rect.x;
+	bonus_r_.y = rect.y - bonus_r_.h;
+
+
+	SDL_RenderCopy(Global::renderer, bonus_, NULL, &bonus_r_);
+	SDL_RenderPresent(Global::renderer);
+	SDL_Delay(1000);
+	SDL_DestroyTexture(bonus_);
+	
 }

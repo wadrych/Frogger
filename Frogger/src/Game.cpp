@@ -8,14 +8,14 @@ Player* EntitiyManager::player;
 GameObject** EntitiyManager::cars;
 GameObject** EntitiyManager::logs;
 Tortoise** EntitiyManager::tortoises;
+BonusFrog* EntitiyManager::bonus_frog;
 
 game_object* EntitiyManager::player_s;
 game_object* EntitiyManager::cars_s;
 game_object* EntitiyManager::logs_s;
 game_object* EntitiyManager::tortoises_s;
+game_object* EntitiyManager::bonus_frog_s;
 
-UserInterface* gui;
-Map* map;
 
 Game::Game()
 {
@@ -37,13 +37,9 @@ void Game::init(const char* title, const int x_pos, const int y_pos, const bool 
 	spots_[3] = 0;
 	spots_[4] = 0;
 	spots_amt_ = 5;
-	game_over_ = false;
-	paused_ = false;
-	quit_ = false;
 	score_ = 0;
-	main_menu_ = false;
 	current_ = NEW_GAME;
-	
+
 	srand(time(NULL));
 	
 	is_running_ = sdl_initialization(title, x_pos, y_pos, fullscreen);
@@ -59,16 +55,15 @@ void Game::init(const char* title, const int x_pos, const int y_pos, const bool 
 	entitiy_manager_ = new EntitiyManager();
 	entitiy_manager_->init();
 
+	score_manager = new ScoreManager();
+	score_manager->init();
+
 	last_position_ = (int)EntitiyManager::player->get_y();
 }
 
 void Game::update()
 {
-	if(current_ == NEW_GAME)
-	{
-		
-	}
-	if(current_ == GAME)//!game_over_ && !paused_ && !quit_ && !main_menu_)
+	if (current_ == GAME)//!game_over_ && !paused_ && !quit_ && !main_menu_)
 	{
 		calculate_time();
 		check_time();
@@ -77,13 +72,25 @@ void Game::update()
 
 		check_collisions();
 
+		if (bonus_ > 0)
+		{
+			render();
+			gui->show_bonus(EntitiyManager::player->get_dest_rect(), bonus_);
+			bonus_ = 0;
+		}
+		
+
 		EntitiyManager::player->update(); //if position of player was changed due to detected collisions apply the changes
 
 		fps_counter();
 
 		gui->update_info(world_time_, fps_, EntitiyManager::player->health(), score_);
-
+		
 		frames_++;
+	}
+	else if(current_ == HIGH_SCORES_TABLE)
+	{
+		gui->show_high_scores(score_manager->get_results(), score_manager->get_results_amt());
 	}
 	else
 	{
@@ -123,6 +130,7 @@ void Game::clean()
 	
 	delete gui;
 	delete map;
+	delete score_manager;
 	
 	entitiy_manager_->destroy();
 	delete entitiy_manager_;
@@ -152,7 +160,7 @@ void Game::handle_events()
 				EventHandler::move_up(map);
 			}
 		}
-		else if (event.key.keysym.sym == SDLK_DOWN && (!game_over_ && !quit_ && !paused_))
+		else if (event.key.keysym.sym == SDLK_DOWN)
 		{
 			if (current_ == NEW_GAME || current_ == HIGH_SCORES || current_ == QUIT_GAME)
 			{
@@ -199,16 +207,26 @@ void Game::handle_events()
 			EventHandler::pause_game(&current_);
 			gui->clean_menu();
 		}
-		else if (event.key.keysym.sym == SDLK_q && (current_ == GAME || current_ == QUIT))
+		else if (event.key.keysym.sym == SDLK_q)
 		{
-			EventHandler::quit_menu(&current_);
-			last_frame_time_ = SDL_GetTicks();
-			gui->clean_menu();
+			if(current_ == HIGH_SCORES_TABLE)
+			{
+				current_ = NEW_GAME;
+			}
+			else if (current_ == GAME || current_ == QUIT)
+			{
+				EventHandler::quit_menu(&current_);
+				last_frame_time_ = SDL_GetTicks();
+				gui->clean_menu();
+			}
 		}
 		else if (event.key.keysym.sym == SDLK_RETURN)
 		{
+			if (current_ == NEW_GAME)
+			{
+				EventHandler::restart_game(&current_, spots_, entitiy_manager_, &world_time_, &score_);
+			}
 			EventHandler::menu_launch(&current_, &is_running_);
-			EventHandler::restart_game(&current_, spots_, entitiy_manager_, &world_time_, &score_);
 			gui->clean_menu();
 		}
 		break;
@@ -284,6 +302,11 @@ void Game::fail()
 		score_ += 10;
 		last_position_ = current_position;
 	}
+
+	if(EntitiyManager::player->has_bonus())
+	{
+		EntitiyManager::bonus_frog->set_visible(false);
+	}
 	
 	EntitiyManager::player->lost();
 	EntitiyManager::player->set_x(EntitiyManager::player_s->x);
@@ -291,6 +314,7 @@ void Game::fail()
 
 	if(!EntitiyManager::player->is_alive())
 	{
+		handle_score();
 		current_ = GAME_OVER;
 	}
 	world_time_ = 0;
@@ -299,16 +323,26 @@ void Game::fail()
 void Game::success()
 {
 	const int game_time = 50;
-	
+	bonus_ = 0;
 	EntitiyManager::player->set_x(EntitiyManager::player_s->x);
 	EntitiyManager::player->set_y(EntitiyManager::player_s->y);
 	
 	score_ += 50 + (int)((game_time-world_time_) * 10);
+
+	if(EntitiyManager::player->has_bonus())
+	{
+		bonus_ += 200;
+		EntitiyManager::bonus_frog->set_visible(false);
+	}
+	EntitiyManager::player->lose_bonus();
+	
+	score_ += bonus_;
+	
 	world_time_ = 0;
 	
 	if(check_if_won())
 	{
-		
+		handle_score();
 	}
 }
 
@@ -322,6 +356,28 @@ bool Game::check_if_won()
 		}
 	}
 	return true;
+}
+
+void Game::handle_score()
+{	
+	char name[8] = "";
+	char* composition;
+	Sint32 cursor;
+	Sint32 selection_len;
+
+	SDL_bool done = SDL_FALSE;
+
+	if(score_manager->is_higher_than_saved(score_))
+	{
+		SDL_StartTextInput();
+		while (!done)
+		{
+			EventHandler::handle_text_input(name, &done);
+			gui->show_save_score(score_, name);
+			render();
+		}
+		score_manager->set_new_high_score(score_, name);
+	}
 }
 
 void Game::check_collisions()
@@ -340,7 +396,21 @@ void Game::check_collisions()
 		}
 	}
 
+	if(CollisionDetector::check_collision(EntitiyManager::player->get_dest_rect(), EntitiyManager::bonus_frog->get_dest_rect()))
+	{
+		EntitiyManager::bonus_frog->set_velocity(0);
+		EntitiyManager::player->attach_bonus();
+		
+	}
+
+	if(EntitiyManager::player->has_bonus())
+	{
+		EntitiyManager::bonus_frog->set_x(EntitiyManager::player->get_x());
+		EntitiyManager::bonus_frog->set_y(EntitiyManager::player->get_y());
+	}
+
 	CollisionDetector::check_collisions_water();
+	
 	if (CollisionDetector::check_collisions_car())
 	{
 		fail();

@@ -176,3 +176,4 @@ int CollisionDetector::check_collisions_spots()
 
 	return -1;
 }
+

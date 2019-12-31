@@ -18,6 +18,11 @@ typedef struct game_object
 	double v;
 } game_object;
 
+typedef  struct result {
+	int score;
+	char* name;
+} result;
+
 class Global
 {
 public:

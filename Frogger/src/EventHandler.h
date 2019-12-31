@@ -19,4 +19,5 @@ public:
 	static void menu_up(option* current);
 	static void menu_down(option* current);
 	static void menu_launch(option* current, bool* is_running);
+	static void handle_text_input(char name[8], SDL_bool* done);
 };

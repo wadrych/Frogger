@@ -11,6 +11,7 @@
 #include "Map.h"
 #include "EventHandler.h"
 #include "EntitiyManager.h"
+#include "ScoreManager.h"
 
 class Game
 {
@@ -29,10 +30,6 @@ public:
 
 private:
 	bool is_running_;
-	bool game_over_;
-	bool paused_;
-	bool quit_;
-	bool main_menu_;
 	SDL_Window* window_;
 	SDL_Texture* screen_;
 
@@ -40,6 +37,9 @@ private:
 	Uint32 current_frame_time_;
 
 	EntitiyManager* entitiy_manager_;
+	ScoreManager* score_manager;
+	UserInterface* gui;
+	Map* map;
 
 	int frames_;
 
@@ -53,8 +53,9 @@ private:
 
 	int score_;
 	int last_position_;
+	int bonus_;
 	option current_;
-	menu_mode mode_;
+
 
 	bool sdl_initialization(const char* title, const int x_pos, const int y_pos, const bool fullscreen);
 	void fps_counter();
@@ -64,6 +65,7 @@ private:
 	void create_map();
 	void fail();
 	void success();
+	void handle_score();
 	bool check_if_won();
 	void check_collisions();
 	void render_spots();

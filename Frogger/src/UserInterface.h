@@ -5,10 +5,6 @@
 #include "Global.h"
 #include "TextureManager.h"
 
-enum menu_mode
-{
-};
-
 enum option
 {
 	NEW_GAME,
@@ -18,7 +14,8 @@ enum option
 	GAME_OVER,
 	PAUSE,
 	MENU,
-	QUIT
+	QUIT,
+	HIGH_SCORES_TABLE
 };
 
 class UserInterface
@@ -35,11 +32,14 @@ public:
 	void show_text(const char* text);
 	void clean_menu();
 	void destroy();
+	void show_save_score(int score, char* name);
+	void show_high_scores(result leaderboard[10], const int records_amt);
+	void show_bonus(SDL_Rect rect, int bonus);
 	
 	SDL_Surface* create_time_bar(double world_time);
 	
 private:
-	void draw_text_(SDL_Texture** texture, const char* text);
+	void draw_text_(SDL_Texture** texture, const char* text, bool wrap = false);
 	void draw_rect_(SDL_Texture** texture, SDL_Rect tex_r, bool current);
 	
 	SDL_Texture* container_;
@@ -54,6 +54,7 @@ private:
 	SDL_Texture* high_scores_text_;
 	SDL_Texture* quit_;
 	SDL_Texture* quit_text_;
+	SDL_Texture* bonus_;
 	
 	SDL_Rect dest_r_;
 	SDL_Rect dest_r_bar_;
@@ -67,6 +68,7 @@ private:
 	SDL_Rect high_scores_t_r_;
 	SDL_Rect quit_r_;
 	SDL_Rect quit_t_r_;
+	SDL_Rect bonus_r_;
 	
 	
 	int surface_height_;

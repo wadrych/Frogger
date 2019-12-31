@@ -37,23 +37,28 @@ void EntitiyManager::load()
 	cars_s[13] = { SCREEN_WIDTH * 0, 7 * 32 + 16, 64, 32, "assets/car_5.png", -0.5 };
 	cars_s[4] = { SCREEN_WIDTH * 1, 7 * 32 + 16, 64, 32, "assets/car_5.png", -0.5 };
 
-	logs_amt = 13;
+	logs_amt = 17;
 	logs_s = (game_object*)malloc(logs_amt * sizeof(game_object));
 	logs_s[0] = { SCREEN_WIDTH * 0, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
-	logs_s[1] = { SCREEN_WIDTH * 1 / 2, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
-	logs_s[2] = { SCREEN_WIDTH * 1 / 1, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
-	logs_s[3] = { SCREEN_WIDTH * 3 / 2, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
-	logs_s[4] = { SCREEN_WIDTH * (-1) / 2, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
+	logs_s[1] = { SCREEN_WIDTH * 4 / 14, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
+	logs_s[2] = { SCREEN_WIDTH * 8 / 14, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
+	logs_s[3] = { SCREEN_WIDTH * 12 / 14, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
+	logs_s[4] = { SCREEN_WIDTH * 16 / 14, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
+	logs_s[13] = { SCREEN_WIDTH * 20 / 14, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
+	logs_s[14] = { SCREEN_WIDTH * 24 / 14, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
+	logs_s[15] = { SCREEN_WIDTH * 28 / 14, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
+	logs_s[16] = { SCREEN_WIDTH * -3 / 14, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
+	
+	
+	logs_s[5] = { SCREEN_WIDTH * 0, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1.5 };
+	logs_s[6] = { SCREEN_WIDTH * 8 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1.5 };
+	logs_s[7] = { SCREEN_WIDTH * 16 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1.5 };
+	logs_s[8] = { SCREEN_WIDTH * 24 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1.5 };
 
-	logs_s[5] = { SCREEN_WIDTH * 0, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1 };
-	logs_s[6] = { SCREEN_WIDTH * 8 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1 };
-	logs_s[7] = { SCREEN_WIDTH * 16 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1 };
-	logs_s[8] = { SCREEN_WIDTH * 24 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1 };
-
-	logs_s[9] = { SCREEN_WIDTH * 0, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 0.5 };
-	logs_s[10] = { SCREEN_WIDTH * 3 / 4, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 0.5 };
-	logs_s[11] = { SCREEN_WIDTH * 5 / 4, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 0.5 };
-	logs_s[12] = { SCREEN_WIDTH * 7 / 4, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 0.5 };
+	logs_s[9] = { SCREEN_WIDTH * 0, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 1 };
+	logs_s[10] = { SCREEN_WIDTH * 3 / 4, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 1 };
+	logs_s[11] = { SCREEN_WIDTH * 5 / 4, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 1 };
+	logs_s[12] = { SCREEN_WIDTH * 7 / 4, 32 * 1 + 16, 32 * 5,32,"assets/log_mid.png", 1 };
 
 	tortoises_amt = 16;
 	tortoises_s = (game_object*)malloc(tortoises_amt * sizeof(game_object));
@@ -73,6 +78,14 @@ void EntitiyManager::load()
 	tortoises_s[13] = { SCREEN_WIDTH * 19 / 14, 32 * 2 + 16, 32 * 2,32,"assets/tortoise_2.png", -1 };
 	tortoises_s[14] = { SCREEN_WIDTH * 22 / 14, 32 * 2 + 16, 32 * 2,32,"assets/tortoise_2.png", -1 };
 	tortoises_s[15] = { SCREEN_WIDTH * 25 / 14, 32 * 2 + 16, 32 * 2,32,"assets/tortoise_2.png", -1 };
+
+	bonus_frog_s = (game_object*)malloc(sizeof(game_object));
+	bonus_frog_s[0].x = logs_s[14].x;
+	bonus_frog_s[0].y = logs_s[14].y;
+	bonus_frog_s[0].v = logs_s[14].v;
+	bonus_frog_s[0].h = logs_s[14].h;
+	bonus_frog_s[0].w = 32;
+	bonus_frog_s[0].path = "assets/frog_bonus.png";
 }
 
 void EntitiyManager::create()
@@ -81,6 +94,7 @@ void EntitiyManager::create()
 	create_cars();
 	create_logs();
 	create_tortoises();
+	create_bonus_frog();
 }
 
 void EntitiyManager::create_cars()
@@ -117,6 +131,8 @@ void EntitiyManager::update()
 {
 	player->update();
 
+	bonus_frog->update();
+
 	for (int i = 0; i < cars_amt; i++)
 	{
 		cars[i]->update();
@@ -149,11 +165,13 @@ void EntitiyManager::render()
 	}
 
 	player->render();
+	bonus_frog->render();
 }
 
 void EntitiyManager::destroy()
 {
 	SDL_DestroyTexture(player->get_texture());
+	SDL_DestroyTexture(bonus_frog->get_texture());
 	for (int i = 0; i < cars_amt; i++)
 	{
 		SDL_DestroyTexture(cars[i]->get_texture());
@@ -168,6 +186,7 @@ void EntitiyManager::destroy()
 	}
 
 	delete player;
+	delete bonus_frog;
 	for (int i = 0; i < cars_amt; i++)
 	{
 		delete cars[i];
@@ -185,10 +204,16 @@ void EntitiyManager::destroy()
 	free(cars_s);
 	free(logs_s);
 	free(tortoises_s);
+	free(bonus_frog_s);
 }
 
 void EntitiyManager::create_player()
 {
 	player = new Player(player_s);
 	player->init();
+}
+
+void EntitiyManager::create_bonus_frog()
+{
+	bonus_frog = new BonusFrog(bonus_frog_s);
 }

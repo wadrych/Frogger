@@ -10,6 +10,11 @@ void EventHandler::move_right(Map* m)
 	if(p->get_dest_rect().x + p->get_dest_rect().w >= m->get_dest_rect().w && p->get_dest_rect().y >= 192)//192 pixel - beggining of route)
 	{
 		p->move_left();
+		
+		if(p->has_bonus())
+		{
+			EntitiyManager::bonus_frog->move_left();
+		}
 	}
 }
 
@@ -21,6 +26,11 @@ void EventHandler::move_left(Map* m)
 	if (p->get_dest_rect().x <= 0 && p->get_dest_rect().y >= 192)//192 pixel - beginning of route
 	{
 		p->move_right();
+		
+		if (p->has_bonus())
+		{
+			EntitiyManager::bonus_frog->move_right();
+		}
 	}
 }
 
@@ -32,6 +42,11 @@ void EventHandler::move_down(Map* m)
 	if (p->get_dest_rect().y + p->get_dest_rect().h >= m->get_dest_rect().h)
 	{
 		p->move_up();
+		
+		if (p->has_bonus())
+		{
+			EntitiyManager::bonus_frog->move_up();
+		}
 	}
 }
 
@@ -43,6 +58,11 @@ void EventHandler::move_up(Map* m)
 	if (p->get_dest_rect().y <=0)
 	{
 		p->move_down();
+
+		if (p->has_bonus())
+		{
+			EntitiyManager::bonus_frog->move_down();
+		}
 	}
 }
 
@@ -133,7 +153,7 @@ void EventHandler::menu_launch(option* current, bool* is_running)
 	}
 	else if (*current == HIGH_SCORES)
 	{
-		//open highscores
+		*current = HIGH_SCORES_TABLE;
 	}
 	else if (*current == QUIT_GAME)
 	{
@@ -141,5 +161,34 @@ void EventHandler::menu_launch(option* current, bool* is_running)
 	}
 }
 
+void EventHandler::handle_text_input(char name[8], SDL_bool* done)
+{
+	SDL_Event event;
+	if (SDL_PollEvent(&event)) {
+		switch (event.type) {
+		case SDL_TEXTINPUT:
+			/* Add new text onto the end of our text */
+			if (strlen(name) < 7)
+			{
+				strcat(name, event.text.text);
+			}
+			break;
+		case SDL_KEYDOWN:
+			char keyDown = event.key.keysym.scancode;
 
+			if (keyDown == SDL_SCANCODE_BACKSPACE)
+			{
+				if (strlen(name) > 0)
+				{
+					name[strlen(name) - 1] = 0;
+				}
+			}
+			else if (keyDown == SDL_SCANCODE_RETURN)
+			{
+				*done = SDL_TRUE;
+			}
+			break;
+		}
+	}
+}
 

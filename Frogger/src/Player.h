@@ -19,10 +19,14 @@ public:
 	bool is_alive();
 	int health();
 	void init();
+	void attach_bonus();
+	void lose_bonus();
+	bool has_bonus();
 
 private:
 	int health_;
 	bool is_on_sth_;
 	bool is_alive_;
+	bool has_bonus_;
 };
 
