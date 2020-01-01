@@ -396,7 +396,7 @@ void Game::check_collisions()
 		}
 	}
 
-	if(CollisionDetector::check_collision(EntitiyManager::player->get_dest_rect(), EntitiyManager::bonus_frog->get_dest_rect()))
+	if(CollisionDetector::check_collision(EntitiyManager::player->get_dest_rect(), EntitiyManager::bonus_frog->get_dest_rect())  && EntitiyManager::bonus_frog->is_visible())
 	{
 		EntitiyManager::bonus_frog->set_velocity(0);
 		EntitiyManager::player->attach_bonus();
