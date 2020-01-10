@@ -55,6 +55,7 @@ private:
 	SDL_Texture* quit_;
 	SDL_Texture* quit_text_;
 	SDL_Texture* bonus_;
+	SDL_Texture* high_scores_places_[10];
 	
 	SDL_Rect dest_r_;
 	SDL_Rect dest_r_bar_;
@@ -69,6 +70,8 @@ private:
 	SDL_Rect quit_r_;
 	SDL_Rect quit_t_r_;
 	SDL_Rect bonus_r_;
+	SDL_Rect high_score_places_r_[10];
+
 	
 	
 	int surface_height_;

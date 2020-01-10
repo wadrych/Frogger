@@ -477,7 +477,7 @@ bool Game::sdl_initialization(const char* title, const int x_pos, const int y_po
 					else
 					{
 						printf("SDL_ttf initialized!\n");
-						Global::font = TTF_OpenFont("../../TTF/UniversCondensed.ttf", 100);
+						Global::font = TTF_OpenFont("../../TTF/VT323-Regular.ttf", 100);
 						if (Global::font == NULL)
 						{
 							printf("Font could not initialize! SDL_ttf Error: %s\n", TTF_GetError());

@@ -21,14 +21,29 @@ void ScoreManager::init()
 		return;
 	}
 
+	for(int i = 0; i < results_amt_; i++)
+	{
+		sprintf(names_[i], "%s", "");
+	}
+
 
 	int temp_score = 0;
 	
 	for(int i = 0; i < results_amt_; i++)
 	{
-		fscanf(results, "%i %s", &temp_score, names_[i]);
-		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-		best_results_[i].score = temp_score;
+		temp_score = 0;
+		int res = fscanf(results, "%i %s", &temp_score, names_[i]);
+
+		//if name is empty then don't save score
+		if(res == EOF)
+		{
+			best_results_[i].score = 0;
+		}
+		else
+		{
+			best_results_[i].score = temp_score;
+		}
+
 		best_results_[i].name = names_[i];
 	}
 
