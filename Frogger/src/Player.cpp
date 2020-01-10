@@ -2,6 +2,8 @@
 
 Player::Player(game_object* rect) : GameObject(rect)
 {
+	start_x_ = rect->x;
+	start_y_ = rect->y;
 }
 
 Player::~Player()
@@ -86,5 +88,12 @@ bool Player::has_bonus()
 {
 	return has_bonus_;
 }
+
+void Player::reset_pos()
+{
+	pos_x_ = start_x_;
+	pos_y_ = start_y_;
+}
+
 
 

@@ -28,5 +28,4 @@ class Global
 public:
 	static SDL_Renderer* renderer;
 	static TTF_Font* font;
-	static long long int time_delta;
 };

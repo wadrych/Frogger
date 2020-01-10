@@ -2,20 +2,12 @@
 
 SDL_Renderer* Global::renderer = NULL;
 TTF_Font* Global::font = NULL;
-long long int Global::time_delta = 0;
 
 Player* EntitiyManager::player;
 GameObject** EntitiyManager::cars;
 GameObject** EntitiyManager::logs;
 Tortoise** EntitiyManager::tortoises;
 BonusFrog* EntitiyManager::bonus_frog;
-
-game_object* EntitiyManager::player_s;
-game_object* EntitiyManager::cars_s;
-game_object* EntitiyManager::logs_s;
-game_object* EntitiyManager::tortoises_s;
-game_object* EntitiyManager::bonus_frog_s;
-
 
 Game::Game()
 {
@@ -63,12 +55,12 @@ void Game::init(const char* title, const int x_pos, const int y_pos, const bool 
 
 void Game::update()
 {
-	if (current_ == GAME)//!game_over_ && !paused_ && !quit_ && !main_menu_)
+	if (current_ == GAME)
 	{
 		calculate_time();
 		check_time();
 
-		entitiy_manager_->update();
+		entitiy_manager_->update(delta_ms_);
 
 		check_collisions();
 
@@ -251,7 +243,7 @@ bool Game::running()
 
 void Game::fps_counter()
 {
-	fps_timer_ += delta_;
+	fps_timer_ += delta_s_;
 	if (fps_timer_ > 0.5) {
 		fps_ = frames_ * 2;
 
@@ -266,11 +258,11 @@ void Game::calculate_time()
 
 	current_frame_time_ = SDL_GetTicks();
 
-	Global::time_delta = (current_frame_time_ - last_frame_time_);
-	delta_ = Global::time_delta * to_seconds;
+	delta_ms_ = (current_frame_time_ - last_frame_time_);
+	delta_s_ = delta_ms_ * to_seconds;
 	last_frame_time_ = current_frame_time_;
 
-	world_time_ += delta_*5;
+	world_time_ += delta_s_*5;
 }
 
 void Game::create_gui()
@@ -309,8 +301,7 @@ void Game::fail()
 	}
 	
 	EntitiyManager::player->lost();
-	EntitiyManager::player->set_x(EntitiyManager::player_s->x);
-	EntitiyManager::player->set_y(EntitiyManager::player_s->y);
+	EntitiyManager::player->reset_pos();
 
 	if(!EntitiyManager::player->is_alive())
 	{
@@ -324,8 +315,7 @@ void Game::success()
 {
 	const int game_time = 50;
 	bonus_ = 0;
-	EntitiyManager::player->set_x(EntitiyManager::player_s->x);
-	EntitiyManager::player->set_y(EntitiyManager::player_s->y);
+	EntitiyManager::player->reset_pos();
 	
 	score_ += 50 + (int)((game_time-world_time_) * 10);
 
@@ -361,9 +351,6 @@ bool Game::check_if_won()
 void Game::handle_score()
 {	
 	char name[8] = "";
-	char* composition;
-	Sint32 cursor;
-	Sint32 selection_len;
 
 	SDL_bool done = SDL_FALSE;
 

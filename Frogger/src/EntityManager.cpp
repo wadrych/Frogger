@@ -1,21 +1,21 @@
-#include "EntitiyManager.h"
+#include "EntityManager.h"
 
-EntitiyManager::EntitiyManager()
+EntityManager::EntityManager()
 {
 }
 
-EntitiyManager::~EntitiyManager()
+EntityManager::~EntityManager()
 {
 }
 
-void EntitiyManager::init()
+void EntityManager::init()
 {
 	load();
 	create();
 }
 
 
-void EntitiyManager::load()
+void EntityManager::load()
 {
 	player_s = (game_object*)malloc(sizeof(game_object));
 	*player_s = { 32 * 7 , 32 * 12 + 16, 32, 32,  "assets/frogger.png", 0 };
@@ -88,7 +88,7 @@ void EntitiyManager::load()
 	bonus_frog_s[0].path = "assets/frog_bonus.png";
 }
 
-void EntitiyManager::create()
+void EntityManager::create()
 {
 	create_player();
 	create_cars();
@@ -97,7 +97,7 @@ void EntitiyManager::create()
 	create_bonus_frog();
 }
 
-void EntitiyManager::create_cars()
+void EntityManager::create_cars()
 {
 	cars = (GameObject**)malloc(cars_amt * sizeof(GameObject*));
 
@@ -107,7 +107,7 @@ void EntitiyManager::create_cars()
 	}
 }
 
-void EntitiyManager::create_logs()
+void EntityManager::create_logs()
 {
 	logs = (GameObject**)malloc(logs_amt * sizeof(GameObject*));
 
@@ -117,7 +117,7 @@ void EntitiyManager::create_logs()
 	}
 }
 
-void EntitiyManager::create_tortoises()
+void EntityManager::create_tortoises()
 {
 	tortoises = (Tortoise**)malloc(tortoises_amt * sizeof(Tortoise*));
 
@@ -127,7 +127,7 @@ void EntitiyManager::create_tortoises()
 	}
 }
 
-void EntitiyManager::update(double delta_ms)
+void EntityManager::update(double delta_ms)
 {
 	player->update();
 
@@ -149,7 +149,7 @@ void EntitiyManager::update(double delta_ms)
 	}
 }
 
-void EntitiyManager::render()
+void EntityManager::render()
 {
 	for (int i = 0; i < cars_amt; i++)
 	{
@@ -168,7 +168,7 @@ void EntitiyManager::render()
 	bonus_frog->render();
 }
 
-void EntitiyManager::destroy()
+void EntityManager::destroy()
 {
 	SDL_DestroyTexture(player->get_texture());
 	SDL_DestroyTexture(bonus_frog->get_texture());
@@ -207,13 +207,18 @@ void EntitiyManager::destroy()
 	free(bonus_frog_s);
 }
 
-void EntitiyManager::create_player()
+void EntityManager::create_player()
 {
 	player = new Player(player_s);
 	player->init();
 }
 
-void EntitiyManager::create_bonus_frog()
+void EntityManager::create_bonus_frog()
 {
-	bonus_frog = new BonusFrog(bonus_frog_s);
+	EntityManager::bonus_frog = new BonusFrog(bonus_frog_s);
+}
+
+Player* EntityManager::get_player()
+{
+	return player;
 }

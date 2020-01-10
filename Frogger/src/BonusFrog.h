@@ -9,7 +9,7 @@ public:
 	BonusFrog(game_object* rect);
 	~BonusFrog();
 
-	void update();
+	void update(double delta_ms);
 	bool is_visible();
 	void set_visible(const bool v);
 	void render();

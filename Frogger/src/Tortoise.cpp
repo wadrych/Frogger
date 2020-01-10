@@ -20,11 +20,11 @@ Tortoise::~Tortoise()
 {
 }
 
-void Tortoise::update()
+void Tortoise::update(double delta_ms)
 {
 	if(diving_)
 	{
-		delta_ += Global::time_delta;
+		delta_ += delta_ms;
 		if(delta_ >= 1000)
 		{
 			visible_ = !visible_;

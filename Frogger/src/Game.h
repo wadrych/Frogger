@@ -45,7 +45,8 @@ private:
 
 	double world_time_;
 	double fps_timer_;
-	double delta_;
+	double delta_s_;
+	double delta_ms_;
 	double fps_;
 
 	int spots_[5];

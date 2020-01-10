@@ -6,17 +6,18 @@
 #include  "Tortoise.h"
 #include "BonusFrog.h"
 
-class EntitiyManager
+class EntityManager
 {
 public:
 
-	EntitiyManager();
-	~EntitiyManager();
+	EntityManager();
+	~EntityManager();
 
 	void init();
 	void update(double delta_ms);
 	void render();
 	void destroy();
+	Player* get_player();
 
 	static Player* player;
 	static GameObject** cars;
@@ -24,9 +25,9 @@ public:
 	static Tortoise** tortoises;
 	static BonusFrog* bonus_frog;
 	
-	static int cars_amt;
-	static int logs_amt;
-	static int tortoises_amt;
+	int cars_amt;
+	int logs_amt;
+	int tortoises_amt;
 
 	game_object* player_s;
 	game_object* cars_s;
@@ -42,5 +43,8 @@ private:
 	void load();
 	void create();
 	void create_bonus_frog();
+
+	
+	
 };
 

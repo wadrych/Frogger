@@ -22,11 +22,15 @@ public:
 	void attach_bonus();
 	void lose_bonus();
 	bool has_bonus();
+	void reset_pos();
 
 private:
 	int health_;
 	bool is_on_sth_;
 	bool is_alive_;
 	bool has_bonus_;
+
+	int start_x_;
+	int start_y_;
 };
 

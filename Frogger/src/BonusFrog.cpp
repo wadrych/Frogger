@@ -12,9 +12,9 @@ BonusFrog::~BonusFrog()
 {
 }
 
-void BonusFrog::update()
+void BonusFrog::update(double delta_ms)
 {
-	delta_ += Global::time_delta ;
+	delta_ += delta_ms;
 
 	if(!visible_)
 	{
