@@ -16,6 +16,7 @@ Game::Game()
 	fps_timer_ = 0;
 	fps_ = 0;
 	world_time_ = 0;
+	game_time_ = 0;
 	spots_[0] = 0;
 	spots_[1] = 0;
 	spots_[2] = 0;
@@ -155,6 +156,7 @@ void Game::calculate_time()
 	last_frame_time_ = current_frame_time_;
 
 	world_time_ += delta_s_;
+	game_time_ += delta_s_;
 }
 
 void Game::create_gui()
@@ -208,7 +210,7 @@ void Game::fail()
 		current_ = GAME_OVER;
 	}
 
-	world_time_ = 0;
+	game_time_ = 0;
 }
 
 void Game::success(int spot)
@@ -222,12 +224,13 @@ void Game::success(int spot)
 	//Add points for time
 	const int base = 50;
 	const int multiplier = 10;
-	score_ += base + (int)((GAME_TIME - world_time_) * multiplier);
+	score_ += base + (int)((GAME_TIME - game_time_) * multiplier);
 
 	SDL_Rect spot_pos = EntityManager::player->disappear();
 	
 	render();
 	gui_->show_bonus(spot_pos, bonus_);
+	last_frame_time_ = SDL_GetTicks();
 	
 	EntityManager::player->reset_pos();
 
@@ -239,7 +242,7 @@ void Game::success(int spot)
 		gui_->clean_menu();
 	}
 	
-	world_time_ = 0;
+	game_time_ = 0;
 
 }
 
@@ -289,17 +292,18 @@ void Game::handle_collisions()
 		EntityManager::player->attach_frog();
 	}
 
-	if(EntityManager::player->has_frog())
-	{
-		EntityManager::bonus_frog->set_x(EntityManager::player->get_x());
-		EntityManager::bonus_frog->set_y(EntityManager::player->get_y());
-	}
 
 	CollisionDetector::check_collisions_water();
 	
 	if (CollisionDetector::check_collisions_car()) fail();
 
 	if (CollisionDetector::check_collision_border()) fail();
+	EntityManager::player->update(); //if position of player was changed due to detected collisions apply the changes
+	if (EntityManager::player->has_frog())
+	{
+		EntityManager::bonus_frog->set_x(EntityManager::player->get_x());
+		EntityManager::bonus_frog->set_y(EntityManager::player->get_y());
+	}
 }
 
 bool Game::sdl_initialization(const char* title, const int x_pos, const int y_pos)
@@ -387,7 +391,7 @@ void Game::render_spots()
 
 void Game::check_time()
 {
-	if(world_time_ > GAME_TIME)
+	if(game_time_ > GAME_TIME)
 	{
 		fail();
 	}
@@ -399,15 +403,14 @@ void Game::game_continue()
 	calculate_time();
 	check_time();
 
-	entity_manager_->update(delta_ms_);
+	entity_manager_->update(delta_ms_, world_time_);
 
 	handle_collisions();
 
-	EntityManager::player->update(); //if position of player was changed due to detected collisions apply the changes
 
 	fps_counter();
 
-	gui_->update_info(world_time_, fps_, EntityManager::player->health(), score_);
+	gui_->update_info(game_time_, fps_, EntityManager::player->health(), score_);
 
 	frames_++;
 }
@@ -426,7 +429,7 @@ void Game::start()
 
 	score_ = 0;
 	current_ = GAME;
-	world_time_ = 0;
+	game_time_ = 0;
 	for (int i = 0; i < 5; i++)
 	{
 		spots_[i] = 0;

@@ -48,6 +48,7 @@ private:
 	double delta_s_;
 	double delta_ms_;
 	double fps_;
+	double game_time_;
 
 	int spots_[5];
 	int spots_amt_;

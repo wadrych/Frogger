@@ -15,7 +15,7 @@ public:
 	~EntityManager();
 
 	void init();
-	void update(double delta_ms);
+	void update(double delta_ms, double time);
 	void render();
 	void destroy();
 
@@ -46,5 +46,8 @@ private:
 	void create();
 	void create_bonus_frog();
 	void create_bonus_bee();
+	void load_cars();
+	void load_logs();
+	void load_tortoises();
 };
 

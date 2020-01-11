@@ -6,6 +6,8 @@ GameObject::GameObject(game_object* rect)
 
 	pos_x_ = rect->x;
 	pos_y_ = rect->y;
+	start_x_ = pos_x_;
+	start_y_ = pos_y_;
 
 	src_r_.w = rect->w;
 	src_r_.h = rect->h;
@@ -28,20 +30,20 @@ void GameObject::render()
 	SDL_RenderCopy(Global::renderer, sprite_, &src_r_, &dest_r_);
 }
 
-void GameObject::update()
+void GameObject::update(double time)
 {
-	double distance = pos_x_ + velocity_;
-	
-	if (distance > street_)
+	double distance_ = (int)(time * velocity_*50 + start_x_) % street_ - (SCREEN_WIDTH / X_CHUNKS) * 6;
+	if (velocity_ < 0)
 	{
-		distance = -(SCREEN_WIDTH / X_CHUNKS) * 6; // 6- cause log is max 6 tiles
-	}
-	else if (distance < -(SCREEN_WIDTH / X_CHUNKS) * 6)// 6- cause log is max 6 tiles
-	{
-		distance = street_;
+		distance_ = street_ + ((int)(time * velocity_ * 50 - start_x_) % street_) - (SCREEN_WIDTH / X_CHUNKS) * 6;
 	}
 
-	pos_x_ = distance;
+	delta_ = fabs(pos_x_ - distance_);
+
+	if(velocity_ != 0)
+	{
+		pos_x_ = distance_;
+	}
 	
 	dest_r_.x = (int)pos_x_;
 	dest_r_.y = (int)pos_y_;
@@ -90,5 +92,10 @@ void GameObject::set_velocity(int v)
 double GameObject::get_velocity()
 {
 	return velocity_;
+}
+
+double GameObject::get_delta()
+{
+	return delta_;
 }
 

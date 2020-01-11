@@ -4,7 +4,7 @@ BonusFrog::BonusFrog(game_object* rect) : GameObject(rect)
 {
 	is_on_sth_ = true;
 	visible_ = false;
-	occurrence_interval_ = rand() % 10;
+	occurrence_interval_ = rand()%10;
 	to_display_ = false;
 }
 
@@ -12,7 +12,7 @@ BonusFrog::~BonusFrog()
 {
 }
 
-void BonusFrog::update(double delta_ms)
+void BonusFrog::update(double delta_ms, double time)
 {
 	delta_ += delta_ms;
 
@@ -33,7 +33,7 @@ void BonusFrog::update(double delta_ms)
 	
 
 	
-	GameObject::update();
+	GameObject::update(time);
 }
 
 bool BonusFrog::is_visible()

@@ -10,7 +10,7 @@ public:
 	~GameObject();
 
 	void render();
-	void update();
+	void update(double time = 0);
 	void set_x(double x);
 	void set_y(double y);
 
@@ -22,6 +22,7 @@ public:
 	SDL_Rect get_src_rect();
 	void set_velocity(int v);
 	double get_velocity();
+	double get_delta();
 
 protected:
 	SDL_Texture* sprite_;
@@ -30,6 +31,9 @@ protected:
 
 	double pos_x_;
 	double pos_y_;
+	double start_x_;
+	double start_y_;
 	double velocity_;
+	double delta_;
 	int street_;
 };

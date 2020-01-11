@@ -20,7 +20,7 @@ Tortoise::~Tortoise()
 {
 }
 
-void Tortoise::update(double delta_ms)
+void Tortoise::update(double delta_ms, double time)
 {
 	const int max_time_in_mode = 1000;
 	
@@ -34,7 +34,7 @@ void Tortoise::update(double delta_ms)
 		}
 	}
 	
-	GameObject::update();
+	GameObject::update(time);
 }
 
 bool Tortoise::is_visible()

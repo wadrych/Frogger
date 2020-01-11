@@ -120,7 +120,7 @@ bool CollisionDetector::check_collisions_water()
 		temp.w = temp.w - (SCREEN_WIDTH / X_CHUNKS);  // from width delete one 32x32
 		if (CollisionDetector::check_collision(EntityManager::player->get_dest_rect(), temp))
 		{
-			EntityManager::player->set_x(EntityManager::player->get_x() + EntityManager::logs[i]->get_velocity());
+			EntityManager::player->set_x(EntityManager::player->get_x() + EntityManager::logs[i]->get_delta());
 			EntityManager::player->set_is_above_water(true);
 
 			return true;
@@ -136,7 +136,7 @@ bool CollisionDetector::check_collisions_water()
 			temp.w = temp.w - (SCREEN_WIDTH / X_CHUNKS);  // from width delete one 32x32
 			if (CollisionDetector::check_collision(EntityManager::player->get_dest_rect(), temp))
 			{
-				EntityManager::player->set_x(EntityManager::player->get_x() + EntityManager::tortoises[i]->get_velocity());
+				EntityManager::player->set_x(EntityManager::player->get_x() - EntityManager::tortoises[i]->get_delta());
 				EntityManager::player->set_is_above_water(true);
 
 				return true;
