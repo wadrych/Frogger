@@ -18,7 +18,7 @@ void UserInterface::init(const int surface_height, const int surface_width, cons
 	dest_r_.x = 0;
 	dest_r_.y = window_height - surface_height;
 
-	dest_r_bar_.w = surface_width / 4;
+	dest_r_bar_.w = surface_width / 2;
 	dest_r_bar_.h = surface_height - 2;
 	dest_r_bar_.x = 0;
 	dest_r_bar_.y = window_height - surface_height;
@@ -92,6 +92,12 @@ void UserInterface::render()
 	SDL_RenderCopy(Global::renderer, high_scores_text_, NULL, &high_scores_t_r_);
 	SDL_RenderCopy(Global::renderer, quit_, NULL, &quit_r_);
 	SDL_RenderCopy(Global::renderer, quit_text_, NULL, &quit_t_r_);
+
+
+	for (int i = 0; i < 10; i++)
+	{
+		SDL_RenderCopy(Global::renderer, high_scores_places_[i], NULL, &high_score_places_r_[i]);
+	}
 }
 
 void UserInterface::update_menu(option current)
@@ -99,24 +105,24 @@ void UserInterface::update_menu(option current)
 	if (current == GAME_OVER)
 	{
 		dest_r_text_.w = dest_r_menu_.w - 200;
-		dest_r_text_.h = 25;
-		dest_r_text_.x = dest_r_menu_.x + 100;
+		dest_r_text_.h = 30;
+		dest_r_text_.x = SCREEN_WIDTH/2 - dest_r_text_.w/2;
 		dest_r_text_.y = dest_r_menu_.y + 160;
 		show_text("GAME OVER QUIT? Y/N");
 	}
 	else if (current == PAUSE)
 	{
 		dest_r_text_.w = dest_r_menu_.w - 300;
-		dest_r_text_.h = 25;
-		dest_r_text_.x = dest_r_menu_.x + 150;
+		dest_r_text_.h = 30;
+		dest_r_text_.x = SCREEN_WIDTH / 2 - dest_r_text_.w / 2;
 		dest_r_text_.y = dest_r_menu_.y + 160;
 		show_text("PAUSE");
 	}
 	else if (current == QUIT)
 	{
-		dest_r_text_.w = dest_r_menu_.w - 300;
-		dest_r_text_.h = 25;
-		dest_r_text_.x = dest_r_menu_.x + 150;
+		dest_r_text_.w = dest_r_menu_.w - 200;
+		dest_r_text_.h = 30;
+		dest_r_text_.x = SCREEN_WIDTH / 2 - dest_r_text_.w / 2;
 		dest_r_text_.y = dest_r_menu_.y + 160;
 		show_text("QUIT GAME? Y/N");
 	}
@@ -148,6 +154,12 @@ void UserInterface::clean_menu()
 	quit_ = NULL;
 	SDL_DestroyTexture(quit_text_);
 	quit_text_ = NULL;
+
+	for (int i = 0; i < 10; i++)
+	{
+		SDL_DestroyTexture(high_scores_places_[i]);
+		high_scores_places_[i] = NULL;
+	}
 }
 
 void UserInterface::show_text(const char* text)
@@ -165,14 +177,14 @@ void UserInterface::update_main_menu(option current)
 	menu_r_.x = 0;
 	menu_r_.y = 0;
 
-	game_name_r_.w = 100;
-	game_name_r_.h = 30;
-	game_name_r_.x = SCREEN_WIDTH - 280;
+	game_name_r_.w = 150;
+	game_name_r_.h = 40;
+	game_name_r_.x = SCREEN_WIDTH / 2 - game_name_r_.w / 2;
 	game_name_r_.y = 50;
 
 	new_game_r_.w = 200;
 	new_game_r_.h = game_name_r_.h;
-	new_game_r_.x = game_name_r_.x - 50;
+	new_game_r_.x = SCREEN_WIDTH/2 - new_game_r_.w /2;
 	new_game_r_.y = game_name_r_.y + game_name_r_.h + 30;
 
 	new_game_t_r_.w = new_game_r_.w - 75;
@@ -182,7 +194,7 @@ void UserInterface::update_main_menu(option current)
 
 	high_scores_r_.w = 200;
 	high_scores_r_.h = game_name_r_.h;
-	high_scores_r_.x = game_name_r_.x - 50;
+	high_scores_r_.x = SCREEN_WIDTH / 2 - high_scores_r_.w / 2;
 	high_scores_r_.y = new_game_r_.y + high_scores_r_.h + 30;
 
 	high_scores_t_r_.w = high_scores_r_.w - 25;
@@ -192,13 +204,15 @@ void UserInterface::update_main_menu(option current)
 	
 	quit_r_.w = 200;
 	quit_r_.h = game_name_r_.h;
-	quit_r_.x = game_name_r_.x - 50;
+	quit_r_.x = SCREEN_WIDTH / 2 - quit_r_.w / 2;
 	quit_r_.y = high_scores_r_.y + quit_r_.h + 30;
 
 	quit_t_r_.w = quit_r_.w - 140;
 	quit_t_r_.h = quit_r_.h - 10;
 	quit_t_r_.x = quit_r_.x + 70;
 	quit_t_r_.y = quit_r_.y + 5;
+
+	clean_menu();
 	
 	
 	draw_rect_(&main_menu_container_, menu_r_, false);
@@ -230,6 +244,11 @@ void UserInterface::destroy()
 	SDL_DestroyTexture(quit_);
 	SDL_DestroyTexture(quit_text_);
 	SDL_DestroyTexture(bonus_);
+
+	for(int i=0;i<10;i++)
+	{
+		SDL_DestroyTexture(high_scores_places_[i]);
+	}
 }
 
 void UserInterface::draw_text_(SDL_Texture** texture, const char* text, bool wrap)
@@ -314,24 +333,36 @@ void UserInterface::show_high_scores(result leaderboard[10], const int records_a
 {
 	clean_menu();
 	
-	new_game_t_r_.x = 30;
-	new_game_t_r_.y = game_name_r_.y + 75;
-	new_game_t_r_.w = 400;
-	new_game_t_r_.h = 250;
-	
 	draw_rect_(&main_menu_container_, menu_r_, false);
 	draw_text_(&game_name_, "HIGH SCORES");
 
-	char text[300] = "";
+
+	high_score_places_r_[0].x = 20;
+	high_score_places_r_[0].y = game_name_r_.y + 75;
+	high_score_places_r_[0].w = 400;
+	high_score_places_r_[0].h = 25;
+
+	for(int i=1; i<10;i++)
+	{
+		high_score_places_r_[i].x = 20;
+		high_score_places_r_[i].h = 25;
+		high_score_places_r_[i].y = high_score_places_r_[i - 1].y + high_score_places_r_[i].h;
+		high_score_places_r_[i].w = 400;
+	}
+
 	for(int i = 0; i < records_amt; i++)
 	{
+		char text[30] = "";
 		char temp[30];
-		sprintf(temp, "%2i. %8s - %5i  ", i + 1, leaderboard[i].name, leaderboard[i].score);
+		
+		sprintf(temp, "%2i. %10s - %10i", i + 1, leaderboard[i].name, leaderboard[i].score);
 		
 		strcat(text, temp);
+
+		draw_text_(&high_scores_places_[i], text);
 	}
 	
-	draw_text_(&new_game_text_, text, true);
+	//draw_text_(&new_game_text_, text, true);
 }
 
 void UserInterface::show_bonus(SDL_Rect rect, int bonus)

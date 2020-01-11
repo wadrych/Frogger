@@ -11,7 +11,7 @@ void EventHandler::move_right(Map* m)
 	{
 		p->move_left();
 		
-		if(p->has_bonus())
+		if(p->has_frog())
 		{
 			EntitiyManager::bonus_frog->move_left();
 		}
@@ -27,7 +27,7 @@ void EventHandler::move_left(Map* m)
 	{
 		p->move_right();
 		
-		if (p->has_bonus())
+		if (p->has_frog())
 		{
 			EntitiyManager::bonus_frog->move_right();
 		}
@@ -43,7 +43,7 @@ void EventHandler::move_down(Map* m)
 	{
 		p->move_up();
 		
-		if (p->has_bonus())
+		if (p->has_frog())
 		{
 			EntitiyManager::bonus_frog->move_up();
 		}
@@ -59,7 +59,7 @@ void EventHandler::move_up(Map* m)
 	{
 		p->move_down();
 
-		if (p->has_bonus())
+		if (p->has_frog())
 		{
 			EntitiyManager::bonus_frog->move_down();
 		}

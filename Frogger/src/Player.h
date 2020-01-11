@@ -19,14 +19,18 @@ public:
 	bool is_alive();
 	int health();
 	void init();
-	void attach_bonus();
-	void lose_bonus();
-	bool has_bonus();
+	void attach_frog();
+	void lose_frog();
+	bool has_frog();
+	void reset_pos();
 
 private:
 	int health_;
 	bool is_on_sth_;
 	bool is_alive_;
-	bool has_bonus_;
+	bool has_frog_;
+
+	int start_x_;
+	int start_y_;
 };
 
