@@ -192,3 +192,74 @@ void EventHandler::handle_text_input(char name[8], SDL_bool* done)
 	}
 }
 
+void EventHandler::arrow_up(option* current, Map* map)
+{
+	if (*current == NEW_GAME || *current == HIGH_SCORES || *current == QUIT_GAME)
+	{
+		menu_up(current);
+	}
+	else if (*current == GAME)
+	{
+		move_up(map);
+	}
+}
+
+void EventHandler::arrow_down(option* current, Map* map)
+{
+	if (*current == NEW_GAME || *current == HIGH_SCORES || *current == QUIT_GAME)
+	{
+		menu_down(current);
+	}
+	else if (*current == GAME)
+	{
+		move_down(map);
+	}
+}
+
+void EventHandler::arrow_left(option current, Map* map)
+{
+	if(current == GAME)
+	{
+		move_left(map);
+	}
+}
+
+void EventHandler::arrow_right(option current, Map* map)
+{
+	if (current == GAME)
+	{
+		move_right(map);
+	}
+}
+
+void EventHandler::key_y(option* current, bool* is_running)
+{
+	if (*current == GAME_OVER)
+	{
+		EventHandler::quit_game(is_running);
+	}
+	else if (*current == QUIT)
+	{
+		*current = NEW_GAME;
+	}
+}
+
+void EventHandler::key_n(option* current, bool* is_running)
+{
+	if (*current == QUIT)
+	{
+		EventHandler::quit_menu(current);
+		last_frame_time_ = SDL_GetTicks();
+		gui->clean_menu();
+	}
+	else if (*current == GAME_OVER)
+	{
+		EventHandler::restart_game(current, spots_, entitiy_manager_, &world_time_, &score_);
+		gui->clean_menu();
+		last_frame_time_ = SDL_GetTicks();
+		last_position_ = (int)EntitiyManager::player->get_y();
+		score_ = 0;
+	}
+}
+
+

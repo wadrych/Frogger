@@ -20,4 +20,10 @@ public:
 	static void menu_down(option* current);
 	static void menu_launch(option* current, bool* is_running);
 	static void handle_text_input(char name[8], SDL_bool* done);
-};
+	static void arrow_up(option* current, Map* map);
+	static void arrow_down(option* current, Map* map);
+	static void arrow_right(option current, Map* map);
+	static void arrow_left(option current, Map* map);
+	static void key_y(option* current, bool* is_running);
+	static void key_n(option* current, bool* is_running);
+}

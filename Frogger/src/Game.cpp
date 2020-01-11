@@ -16,7 +16,6 @@ game_object* EntitiyManager::logs_s;
 game_object* EntitiyManager::tortoises_s;
 game_object* EntitiyManager::bonus_frog_s;
 
-
 Game::Game()
 {
 }
@@ -148,42 +147,12 @@ void Game::handle_events()
 
 	switch (event.type) {
 	case SDL_KEYDOWN:
-		if (event.key.keysym.sym == SDLK_ESCAPE) is_running_ = false;
-		else if (event.key.keysym.sym == SDLK_UP)
-		{
-			if(current_ == NEW_GAME || current_ == HIGH_SCORES || current_ == QUIT_GAME)
-			{
-				EventHandler::menu_up(&current_);
-			}
-			else if (current_ == GAME)
-			{
-				EventHandler::move_up(map);
-			}
-		}
-		else if (event.key.keysym.sym == SDLK_DOWN)
-		{
-			if (current_ == NEW_GAME || current_ == HIGH_SCORES || current_ == QUIT_GAME)
-			{
-				EventHandler::menu_down(&current_);
-			}
-			else if(current_ == GAME)
-			{
-				EventHandler::move_down(map);
-			}
-		}
-		else if (event.key.keysym.sym == SDLK_LEFT && current_ == GAME) EventHandler::move_left(map);
-		else if (event.key.keysym.sym == SDLK_RIGHT && current_ ==  GAME) EventHandler::move_right(map);
-		else if (event.key.keysym.sym == SDLK_y)
-		{
-			if(current_ == GAME_OVER)
-			{
-				EventHandler::quit_game(&is_running_);
-			}
-			else if (current_ == QUIT)
-			{
-				current_ = NEW_GAME;
-			}
-		}
+		if (event.key.keysym.sym == SDLK_ESCAPE)     is_running_ = false;
+		else if (event.key.keysym.sym == SDLK_UP)    EventHandler::arrow_up(&current_, map);
+		else if (event.key.keysym.sym == SDLK_DOWN)  EventHandler::arrow_down(&current_, map);
+		else if (event.key.keysym.sym == SDLK_LEFT)  EventHandler::arrow_left(current_, map);
+		else if (event.key.keysym.sym == SDLK_RIGHT) EventHandler::arrow_right(current_, map);
+		else if (event.key.keysym.sym == SDLK_y)     EventHandler::key_y(&current_, &is_running_);
 		else if (event.key.keysym.sym == SDLK_n)
 		{
 			if(current_ == QUIT)
