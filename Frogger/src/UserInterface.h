@@ -5,19 +5,6 @@
 #include "Global.h"
 #include "TextureManager.h"
 
-enum option
-{
-	NEW_GAME,
-	HIGH_SCORES,
-	QUIT_GAME,
-	GAME,
-	GAME_OVER,
-	PAUSE,
-	MENU,
-	QUIT,
-	HIGH_SCORES_TABLE
-};
-
 class UserInterface
 {
 public:

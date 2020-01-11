@@ -48,8 +48,8 @@ void EntityManager::load()
 	logs_s[14] = { SCREEN_WIDTH * 24 / 14, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
 	logs_s[15] = { SCREEN_WIDTH * 28 / 14, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
 	logs_s[16] = { SCREEN_WIDTH * -3 / 14, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
-	
-	
+
+
 	logs_s[5] = { SCREEN_WIDTH * 0, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1.5 };
 	logs_s[6] = { SCREEN_WIDTH * 8 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1.5 };
 	logs_s[7] = { SCREEN_WIDTH * 16 / 14, 32 * 3 + 16, 32 * 6,32,"assets/log_long.png", 1.5 };
@@ -86,6 +86,9 @@ void EntityManager::load()
 	bonus_frog_s[0].h = logs_s[14].h;
 	bonus_frog_s[0].w = 32;
 	bonus_frog_s[0].path = "assets/frog_bonus.png";
+
+	bonus_bee_s = (game_object*)malloc(sizeof(game_object));
+	bonus_bee_s[0] = { 16 , 0 + 16, 32, 32,  "assets/frog_bonus.png", 0 };
 }
 
 void EntityManager::create()
@@ -95,6 +98,7 @@ void EntityManager::create()
 	create_logs();
 	create_tortoises();
 	create_bonus_frog();
+	create_bonus_bee();
 }
 
 void EntityManager::create_cars()
@@ -133,6 +137,8 @@ void EntityManager::update(double delta_ms)
 
 	bonus_frog->update(delta_ms);
 
+	bonus_bee->update(delta_ms);
+
 	for (int i = 0; i < cars_amt; i++)
 	{
 		cars[i]->update();
@@ -166,12 +172,14 @@ void EntityManager::render()
 
 	player->render();
 	bonus_frog->render();
+	bonus_bee->render();
 }
 
 void EntityManager::destroy()
 {
 	SDL_DestroyTexture(player->get_texture());
 	SDL_DestroyTexture(bonus_frog->get_texture());
+	SDL_DestroyTexture(bonus_bee->get_texture());
 	for (int i = 0; i < cars_amt; i++)
 	{
 		SDL_DestroyTexture(cars[i]->get_texture());
@@ -187,6 +195,7 @@ void EntityManager::destroy()
 
 	delete player;
 	delete bonus_frog;
+	delete bonus_bee;
 	for (int i = 0; i < cars_amt; i++)
 	{
 		delete cars[i];
@@ -205,6 +214,7 @@ void EntityManager::destroy()
 	free(logs_s);
 	free(tortoises_s);
 	free(bonus_frog_s);
+	free(bonus_bee_s);
 }
 
 void EntityManager::create_player()
@@ -215,10 +225,10 @@ void EntityManager::create_player()
 
 void EntityManager::create_bonus_frog()
 {
-	EntityManager::bonus_frog = new BonusFrog(bonus_frog_s);
+	bonus_frog = new BonusFrog(bonus_frog_s);
 }
 
-Player* EntityManager::get_player()
+void EntityManager::create_bonus_bee()
 {
-	return player;
+	bonus_bee = new BonusBee(bonus_bee_s);
 }

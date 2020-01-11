@@ -4,7 +4,7 @@
 
 void EventHandler::move_right(Map* m)
 {
-	Player* p = EntitiyManager::player;
+	Player* p = EntityManager::player;
 	
 	p->move_right();
 	if(p->get_dest_rect().x + p->get_dest_rect().w >= m->get_dest_rect().w && p->get_dest_rect().y >= 192)//192 pixel - beggining of route)
@@ -13,14 +13,14 @@ void EventHandler::move_right(Map* m)
 		
 		if(p->has_frog())
 		{
-			EntitiyManager::bonus_frog->move_left();
+			EntityManager::bonus_frog->move_left();
 		}
 	}
 }
 
 void EventHandler::move_left(Map* m)
 {
-	Player* p = EntitiyManager::player;
+	Player* p = EntityManager::player;
 	
 	p->move_left();
 	if (p->get_dest_rect().x <= 0 && p->get_dest_rect().y >= 192)//192 pixel - beginning of route
@@ -29,14 +29,14 @@ void EventHandler::move_left(Map* m)
 		
 		if (p->has_frog())
 		{
-			EntitiyManager::bonus_frog->move_right();
+			EntityManager::bonus_frog->move_right();
 		}
 	}
 }
 
 void EventHandler::move_down(Map* m)
 {
-	Player* p = EntitiyManager::player;
+	Player* p = EntityManager::player;
 	
 	p->move_down();
 	if (p->get_dest_rect().y + p->get_dest_rect().h >= m->get_dest_rect().h)
@@ -45,14 +45,14 @@ void EventHandler::move_down(Map* m)
 		
 		if (p->has_frog())
 		{
-			EntitiyManager::bonus_frog->move_up();
+			EntityManager::bonus_frog->move_up();
 		}
 	}
 }
 
 void EventHandler::move_up(Map* m)
 {
-	Player* p = EntitiyManager::player;
+	Player* p = EntityManager::player;
 	
 	p->move_up();
 	if (p->get_dest_rect().y <=0)
@@ -61,7 +61,7 @@ void EventHandler::move_up(Map* m)
 
 		if (p->has_frog())
 		{
-			EntitiyManager::bonus_frog->move_down();
+			EntityManager::bonus_frog->move_down();
 		}
 	}
 }
@@ -69,24 +69,6 @@ void EventHandler::move_up(Map* m)
 void EventHandler::quit_game(bool* is_running)
 {
 	*is_running = false;
-}
-
-void EventHandler::restart_game(option* current, int spots[], EntitiyManager* entity_manager, double* world_time, int* score)
-{
-	Player* p = EntitiyManager::player;
-	
-	p->init();
-	
-	*score = 0;
-	*current = GAME;
-	*world_time = 0;
-	for(int i = 0; i < 5; i++)
-	{
-		spots[i] = 0;
-	}
-	entity_manager->destroy();
-	entity_manager->init();
-	
 }
 
 void EventHandler::pause_game(option* current)
@@ -149,7 +131,7 @@ void EventHandler::menu_launch(option* current, bool* is_running)
 {
 	if(*current == NEW_GAME)
 	{
-		*current = GAME;
+		*current = START_GAME;
 	}
 	else if (*current == HIGH_SCORES)
 	{
@@ -244,22 +226,50 @@ void EventHandler::key_y(option* current, bool* is_running)
 	}
 }
 
-void EventHandler::key_n(option* current, bool* is_running)
+void EventHandler::key_n(option* current, bool* is_running, UserInterface* gui, Uint32* last_frame_time)
 {
 	if (*current == QUIT)
 	{
 		EventHandler::quit_menu(current);
-		last_frame_time_ = SDL_GetTicks();
+		*last_frame_time = SDL_GetTicks();
 		gui->clean_menu();
 	}
 	else if (*current == GAME_OVER)
 	{
-		EventHandler::restart_game(current, spots_, entitiy_manager_, &world_time_, &score_);
-		gui->clean_menu();
-		last_frame_time_ = SDL_GetTicks();
-		last_position_ = (int)EntitiyManager::player->get_y();
-		score_ = 0;
+		*current = START_GAME;
 	}
 }
+
+void EventHandler::key_p(option* current, Uint32* last_frame_time, UserInterface* gui)
+{
+	if(*current == GAME || *current == PAUSE)
+	{
+		*last_frame_time = SDL_GetTicks();
+		EventHandler::pause_game(current);
+		gui->clean_menu();
+	}
+}
+
+void EventHandler::key_q(option* current, Uint32* last_frame_time, UserInterface* gui)
+{
+	if (*current == HIGH_SCORES_TABLE)
+	{
+		*current = NEW_GAME;
+	}
+	else if (*current == GAME || *current == QUIT)
+	{
+		EventHandler::quit_menu(current);
+		*last_frame_time = SDL_GetTicks();
+		gui->clean_menu();
+	}
+}
+
+void EventHandler::key_enter(option* current, UserInterface* gui, bool* is_running)
+{
+	EventHandler::menu_launch(current, is_running);
+	gui->clean_menu();
+}
+
+
 
 

@@ -10,7 +10,7 @@
 #include "UserInterface.h"
 #include "Map.h"
 #include "EventHandler.h"
-#include "EntitiyManager.h"
+#include "EntityManager.h"
 #include "ScoreManager.h"
 
 class Game
@@ -18,7 +18,7 @@ class Game
 public:
 	Game();
 	~Game();
-
+	
 	void init(const char* title, int x_pos, int y_pos);
 
 	void handle_events();
@@ -36,10 +36,10 @@ private:
 	Uint32 last_frame_time_;
 	Uint32 current_frame_time_;
 
-	EntitiyManager* entitiy_manager_;
-	ScoreManager* score_manager;
-	UserInterface* gui;
-	Map* map;
+	EntityManager* entity_manager_;
+	ScoreManager* score_manager_;
+	UserInterface* gui_;
+	Map* map_;
 
 	int frames_;
 
@@ -71,4 +71,6 @@ private:
 	void handle_collisions();
 	void render_spots();
 	void check_time();
+	void game_continue();
+	void start();
 };

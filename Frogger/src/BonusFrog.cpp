@@ -53,28 +53,3 @@ void BonusFrog::render()
 		GameObject::render();
 	}
 }
-
-void BonusFrog::move_down()
-{
-	const int distance = 32;
-	pos_y_ += distance;
-}
-
-void BonusFrog::move_up()
-{
-	const int distance = -32;
-	pos_y_ += distance;
-}
-
-void BonusFrog::move_left()
-{
-	const int distance = -32;
-	pos_x_ += distance;
-}
-
-void BonusFrog::move_right()
-{
-	const int distance = 32;
-	pos_x_ += distance;
-}
-

@@ -9,6 +9,7 @@
 #define GUI_HEIGHT 26
 #define X_CHUNKS 14
 #define Y_CHUNKS 13
+#define GAME_TIME 50
 
 typedef struct game_object
 {
@@ -22,6 +23,20 @@ typedef  struct result {
 	int score;
 	char* name;
 } result;
+
+enum option
+{
+	NEW_GAME,
+	HIGH_SCORES,
+	QUIT_GAME,
+	GAME,
+	GAME_OVER,
+	PAUSE,
+	MENU,
+	QUIT,
+	HIGH_SCORES_TABLE,
+	START_GAME
+};
 
 class Global
 {

@@ -1,7 +1,7 @@
 #pragma once
 #include "SDL.h"
 
-#include "EntitiyManager.h"
+#include "EntityManager.h"
 
 class CollisionDetector
 {

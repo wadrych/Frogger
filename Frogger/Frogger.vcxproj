@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\wojte\Documents\Repos\SDL2_ttf\include;C:\Users\wojte\Documents\Repos\SDL2_image\include;C:\Users\wojte\Documents\Repos\SDL2\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\wojte\Documents\Repos\SDL2_ttf\lib\x86;C:\Users\wojte\Documents\Repos\SDL2_image\lib\x86;C:\Users\wojte\Documents\Repos\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\WORKSTATION\Documents\Repos\SDL2_ttf\include;C:\Users\WORKSTATION\Documents\Repos\SDL2_image\include;C:\Users\WORKSTATION\Documents\Repos\SDL2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\WORKSTATION\Documents\Repos\SDL2_ttf\lib\x86;C:\Users\WORKSTATION\Documents\Repos\SDL2_image\lib\x86;C:\Users\WORKSTATION\Documents\Repos\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\Users\wojte\Documents\repos\SDL2\include;C:\Users\wojte\Documents\repos\SDL2_image\include;$(IncludePath)</IncludePath>
@@ -83,12 +83,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\wojte\Documents\Repos\SDL2_ttf\include;C:\Users\wojte\Documents\repos\SDL2\include;C:\Users\wojte\Documents\repos\SDL2_image\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\WORKSTATION\Documents\Repos\SDL2_ttf\include;C:\Users\WORKSTATION\Documents\repos\SDL2\include;C:\Users\WORKSTATION\Documents\repos\SDL2_image\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>C:\Users\wojte\Documents\Repos\SDL2_ttf\lib\x86;C:\Users\wojte\Documents\repos\SDL2\lib\x86;C:\Users\wojte\Documents\repos\SDL2_image\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\WORKSTATION\Documents\Repos\SDL2_ttf\lib\x86;C:\Users\WORKSTATION\Documents\repos\SDL2\lib\x86;C:\Users\WORKSTATION\Documents\repos\SDL2_image\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -141,7 +141,7 @@
     <ClCompile Include="src\BonusBee.cpp" />
     <ClCompile Include="src\BonusFrog.cpp" />
     <ClCompile Include="src\CollisionDetector.cpp" />
-    <ClCompile Include="src\EntitiyManager.cpp" />
+    <ClCompile Include="src\EntityManager.cpp" />
     <ClCompile Include="src\EventHandler.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
@@ -157,7 +157,7 @@
     <ClInclude Include="src\BonusBee.h" />
     <ClInclude Include="src\BonusFrog.h" />
     <ClInclude Include="src\CollisionDetector.h" />
-    <ClInclude Include="src\EntitiyManager.h" />
+    <ClInclude Include="src\EntityManager.h" />
     <ClInclude Include="src\EventHandler.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GameObject.h" />
