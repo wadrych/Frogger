@@ -4,6 +4,13 @@ int EntityManager::cars_amt_;
 int EntityManager::logs_amt_;
 int EntityManager::tortoises_amt_;
 
+Player* EntityManager::player;
+GameObject** EntityManager::cars;
+GameObject** EntityManager::logs;
+Tortoise** EntityManager::tortoises;
+BonusFrog* EntityManager::bonus_frog;
+BonusBee* EntityManager::bonus_bee;
+
 EntityManager::EntityManager()
 {
 }

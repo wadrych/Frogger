@@ -3,13 +3,6 @@
 SDL_Renderer* Global::renderer = NULL;
 TTF_Font* Global::font = NULL;
 
-Player* EntityManager::player;
-GameObject** EntityManager::cars;
-GameObject** EntityManager::logs;
-Tortoise** EntityManager::tortoises;
-BonusFrog* EntityManager::bonus_frog;
-BonusBee* EntityManager::bonus_bee;
-
 Game::Game()
 {
 	frames_ = 0;
