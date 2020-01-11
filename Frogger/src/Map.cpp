@@ -33,16 +33,4 @@ SDL_Rect Map::get_dest_rect()
 	return dest_r_;
 }
 
-SDL_Rect Map::get_right_border()
-{
-	SDL_Rect r;
-
-	r.h = dest_r_.h;
-	r.w = 1;
-	r.x = dest_r_.w;
-	r.y = 0;
-
-	return r;
-}
-
 

@@ -52,7 +52,7 @@ void ScoreManager::init()
 
 bool ScoreManager::is_higher_than_saved(int score)
 {
-	for(int i = 0; i <= results_amt_; i++)
+	for(int i = 0; i < results_amt_; i++)
 	{
 		if(best_results_[i].score < score)
 		{

@@ -5,32 +5,24 @@
 void EventHandler::move_right(Map* m)
 {
 	Player* p = EntityManager::player;
+	const int beginning_of_road = 192 + 16;
 	
 	p->move_right();
-	if(p->get_dest_rect().x + p->get_dest_rect().w >= m->get_dest_rect().w && p->get_dest_rect().y >= 192)//192 pixel - beggining of route)
+	if(p->get_x() + p->get_dest_rect().w > m->get_dest_rect().w && p->get_y() >= beginning_of_road)
 	{
 		p->move_left();
-		
-		if(p->has_frog())
-		{
-			EntityManager::bonus_frog->move_left();
-		}
 	}
 }
 
 void EventHandler::move_left(Map* m)
 {
 	Player* p = EntityManager::player;
+	const int beginning_of_road = 192 + 16;
 	
 	p->move_left();
-	if (p->get_dest_rect().x <= 0 && p->get_dest_rect().y >= 192)//192 pixel - beginning of route
+	if (p->get_x() < m->get_dest_rect().x && p->get_y() >= beginning_of_road)
 	{
 		p->move_right();
-		
-		if (p->has_frog())
-		{
-			EntityManager::bonus_frog->move_right();
-		}
 	}
 }
 
@@ -39,14 +31,9 @@ void EventHandler::move_down(Map* m)
 	Player* p = EntityManager::player;
 	
 	p->move_down();
-	if (p->get_dest_rect().y + p->get_dest_rect().h >= m->get_dest_rect().h)
+	if (p->get_y() + p->get_dest_rect().h > m->get_dest_rect().h)
 	{
 		p->move_up();
-		
-		if (p->has_frog())
-		{
-			EntityManager::bonus_frog->move_up();
-		}
 	}
 }
 
@@ -55,14 +42,9 @@ void EventHandler::move_up(Map* m)
 	Player* p = EntityManager::player;
 	
 	p->move_up();
-	if (p->get_dest_rect().y <=0)
+	if (p->get_y() < m->get_dest_rect().y)
 	{
 		p->move_down();
-
-		if (p->has_frog())
-		{
-			EntityManager::bonus_frog->move_down();
-		}
 	}
 }
 

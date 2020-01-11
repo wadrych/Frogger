@@ -14,7 +14,6 @@ public:
 	
 	SDL_Texture* get_texture();
 	SDL_Rect get_dest_rect();
-	SDL_Rect get_right_border();
 	
 private:
 	SDL_Texture* texture_;

@@ -213,32 +213,21 @@ void Game::fail()
 
 void Game::success(int spot)
 {
-	bonus_ = 0;
-
 	//reserve the spot
 	spots_[spot] = 1;
 	EntityManager::bonus_bee->take_spot(spot);
-	
-	//Add points for bee
-	if(CollisionDetector::caught_bee())
-	{
-		bonus_ += 200;
-	}
-	EntityManager::bonus_bee->set_visible(false);
-	EntityManager::bonus_bee->reset();
 
-	//Add points for frog
-	if(EntityManager::player->has_frog())
-	{
-		bonus_ += 200;
-		EntityManager::bonus_frog->set_visible(false);
-	}
-	EntityManager::player->lose_frog();
-
-	score_ += bonus_;
+	calculate_bonus();
 
 	//Add points for time
-	score_ += 50 + (int)((GAME_TIME - world_time_) * 10);
+	const int base = 50;
+	const int multiplier = 10;
+	score_ += base + (int)((GAME_TIME - world_time_) * multiplier);
+
+	SDL_Rect spot_pos = EntityManager::player->disappear();
+	
+	render();
+	gui_->show_bonus(spot_pos, bonus_);
 	
 	EntityManager::player->reset_pos();
 
@@ -247,9 +236,11 @@ void Game::success(int spot)
 	{
 		handle_score();
 		current_ = START_GAME;
+		gui_->clean_menu();
 	}
 	
 	world_time_ = 0;
+
 }
 
 bool Game::check_if_won()
@@ -404,6 +395,7 @@ void Game::check_time()
 
 void Game::game_continue()
 {
+	
 	calculate_time();
 	check_time();
 
@@ -412,13 +404,6 @@ void Game::game_continue()
 	handle_collisions();
 
 	EntityManager::player->update(); //if position of player was changed due to detected collisions apply the changes
-
-	if (bonus_ > 0)
-	{
-		render();
-		gui_->show_bonus(EntityManager::player->get_dest_rect(), bonus_);
-		bonus_ = 0;
-	}
 
 	fps_counter();
 
@@ -429,6 +414,7 @@ void Game::game_continue()
 
 void Game::start()
 {
+	gui_->clean_menu();
 	last_frame_time_ = SDL_GetTicks();//Init of world time
 
 	create_map();
@@ -447,4 +433,26 @@ void Game::start()
 	}
 	entity_manager_->destroy();
 	entity_manager_->init();
+}
+
+void Game::calculate_bonus()
+{
+	bonus_ = 0;
+	//Add points for bee
+	if (CollisionDetector::caught_bee())
+	{
+		bonus_ += 200;
+	}
+	EntityManager::bonus_bee->set_visible(false);
+	EntityManager::bonus_bee->reset();
+
+	//Add points for frog
+	if (EntityManager::player->has_frog())
+	{
+		bonus_ += 200;
+		EntityManager::bonus_frog->set_visible(false);
+	}
+	EntityManager::player->lose_frog();
+
+	score_ += bonus_;
 }

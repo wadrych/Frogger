@@ -13,6 +13,10 @@ public:
 	bool is_visible();
 	void set_visible(const bool v);
 	void render();
+	void move_up();
+	void move_down();
+	void move_left();
+	void move_right();
 	
 private:
 	bool is_on_sth_;

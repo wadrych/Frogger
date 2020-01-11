@@ -95,5 +95,12 @@ void Player::reset_pos()
 	pos_y_ = start_y_;
 }
 
+SDL_Rect Player::disappear()
+{
+	SDL_Rect p = dest_r_;
+	set_x(-100);
+	set_y(-100);
+	update();
 
-
+	return  p;
+}

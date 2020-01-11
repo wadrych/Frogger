@@ -22,6 +22,7 @@ public:
 	void show_save_score(int score, char* name);
 	void show_high_scores(result leaderboard[10], const int records_amt);
 	void show_bonus(SDL_Rect rect, int bonus);
+	void set_menu_rects();
 	
 	SDL_Surface* create_time_bar(double world_time);
 	
@@ -58,8 +59,6 @@ private:
 	SDL_Rect quit_t_r_;
 	SDL_Rect bonus_r_;
 	SDL_Rect high_score_places_r_[10];
-
-	
 	
 	int surface_height_;
 	int surface_width_;

@@ -43,15 +43,16 @@ void  UserInterface::update_info(double world_time, double fps, int player_healt
 	SDL_Surface* temp = create_time_bar(world_time);
 	container_ = SDL_CreateTextureFromSurface(Global::renderer, temp);
 	SDL_FreeSurface(temp);
-	
 }
 
 SDL_Surface* UserInterface::create_time_bar(double world_time)
 {
 	const int health_bar_pixels = 200;
 	const int game_time = 50;
+	const int whole_time = 1;
+	const double size_of_bar = whole_time - (world_time / game_time);
 
-	dest_r_.w = (int)(health_bar_pixels * (1 - (world_time / game_time)));
+	dest_r_.w = (int)(health_bar_pixels * size_of_bar);
 
 	//prevention against rect with 0 width
 	if (dest_r_.w == 0)
@@ -67,7 +68,9 @@ SDL_Surface* UserInterface::create_time_bar(double world_time)
 	Uint32 outline = SDL_MapRGB(temp->format, 0x00, 0x00, 0x00);
 	Uint32 fill = SDL_MapRGB(temp->format, 0xFF, 0xFF, 0x00);
 
-	if (world_time >= 40 && world_time < 50)
+	const int beginning_of_last_ten_seconds = 40;
+	
+	if (world_time >= beginning_of_last_ten_seconds && world_time < GAME_TIME)
 	{
 		fill = SDL_MapRGB(temp->format, 0xFF, 0x00, 0x00);
 	}
@@ -170,7 +173,7 @@ void UserInterface::show_text(const char* text)
 	draw_text_(&menu_text_, text);
 }
 
-void UserInterface::update_main_menu(option current)
+void UserInterface::set_menu_rects()
 {
 	menu_r_.w = SCREEN_WIDTH;
 	menu_r_.h = SCREEN_HEIGHT;
@@ -184,7 +187,7 @@ void UserInterface::update_main_menu(option current)
 
 	new_game_r_.w = 200;
 	new_game_r_.h = game_name_r_.h;
-	new_game_r_.x = SCREEN_WIDTH/2 - new_game_r_.w /2;
+	new_game_r_.x = SCREEN_WIDTH / 2 - new_game_r_.w / 2;
 	new_game_r_.y = game_name_r_.y + game_name_r_.h + 30;
 
 	new_game_t_r_.w = new_game_r_.w - 75;
@@ -201,7 +204,7 @@ void UserInterface::update_main_menu(option current)
 	high_scores_t_r_.h = high_scores_r_.h - 10;
 	high_scores_t_r_.x = high_scores_r_.x + 15;
 	high_scores_t_r_.y = high_scores_r_.y + 5;
-	
+
 	quit_r_.w = 200;
 	quit_r_.h = game_name_r_.h;
 	quit_r_.x = SCREEN_WIDTH / 2 - quit_r_.w / 2;
@@ -211,9 +214,13 @@ void UserInterface::update_main_menu(option current)
 	quit_t_r_.h = quit_r_.h - 10;
 	quit_t_r_.x = quit_r_.x + 70;
 	quit_t_r_.y = quit_r_.y + 5;
+}
 
+
+void UserInterface::update_main_menu(option current)
+{
+	set_menu_rects();
 	clean_menu();
-	
 	
 	draw_rect_(&main_menu_container_, menu_r_, false);
 	draw_text_(&game_name_, "FROGGER");
@@ -342,7 +349,7 @@ void UserInterface::show_high_scores(result leaderboard[10], const int records_a
 	high_score_places_r_[0].w = 400;
 	high_score_places_r_[0].h = 25;
 
-	for(int i=1; i<10;i++)
+	for(int i = 1; i < 10; i++)
 	{
 		high_score_places_r_[i].x = 20;
 		high_score_places_r_[i].h = 25;
@@ -361,19 +368,20 @@ void UserInterface::show_high_scores(result leaderboard[10], const int records_a
 
 		draw_text_(&high_scores_places_[i], text);
 	}
-	
-	//draw_text_(&new_game_text_, text, true);
 }
 
-void UserInterface::show_bonus(SDL_Rect rect, int bonus)
+void UserInterface::show_bonus(const SDL_Rect rect, const int bonus)
 {
-	char buff[4] = "";
-	sprintf(buff, "%i", bonus);
-	
-	draw_text_(&bonus_, buff);
+	if(bonus > 0)
+	{
+		char buff[4] = "";
+		sprintf(buff, "%i", bonus);
+
+		draw_text_(&bonus_, buff);
+	}
 
 	bonus_r_.w = 40;
-	bonus_r_.h = 10;
+	bonus_r_.h = 15;
 	bonus_r_.x = rect.x;
 	bonus_r_.y = rect.y - bonus_r_.h;
 

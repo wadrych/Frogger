@@ -22,10 +22,12 @@ Tortoise::~Tortoise()
 
 void Tortoise::update(double delta_ms)
 {
+	const int max_time_in_mode = 1000;
+	
 	if(diving_)
 	{
 		delta_ += delta_ms;
-		if(delta_ >= 1000)
+		if(delta_ >= max_time_in_mode)
 		{
 			visible_ = !visible_;
 			delta_ = 0;

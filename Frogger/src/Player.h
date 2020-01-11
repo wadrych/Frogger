@@ -23,6 +23,7 @@ public:
 	void lose_frog();
 	bool has_frog();
 	void reset_pos();
+	SDL_Rect disappear();
 
 private:
 	int health_;

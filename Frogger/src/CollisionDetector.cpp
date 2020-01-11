@@ -81,8 +81,8 @@ bool CollisionDetector::check_collision_border()
 	grass.h = 32 + 16;//dimensions of texture
 
 	river.x = 0;
-	river.y = 32 + 16;
-	river.h = 5 * 32;
+	river.y = 32 + 16; // begin after spot and grass offset
+	river.h = 5 * 32; //5 rows of river
 	river.w = SCREEN_WIDTH;
 
 	if(check_collision(EntityManager::player->get_dest_rect(), left_river) || check_collision(EntityManager::player->get_dest_rect(), right_river))
@@ -97,7 +97,7 @@ bool CollisionDetector::check_collision_border()
 			return true;
 		}
 
-		grass.x += grass.w + 64; // skip water element and grass width
+		grass.x += grass.w + 64; // skip spot and grass width
 	}
 
 	if(check_collision(EntityManager::player->get_dest_rect(), river) && !EntityManager::player->is_above_water())

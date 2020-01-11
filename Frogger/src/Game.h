@@ -73,4 +73,5 @@ private:
 	void check_time();
 	void game_continue();
 	void start();
+	void calculate_bonus();
 };

@@ -12,11 +12,11 @@ GameObject::GameObject(game_object* rect)
 	src_r_.x = 0;
 	src_r_.y = 0;
 	dest_r_.w = rect->w;
-	dest_r_.h = 32;
+	dest_r_.h = 32; //height of one chunk
 
 	velocity_ = rect->v;
 
-	street_ = 2 * SCREEN_WIDTH;
+	street_ = 2 * SCREEN_WIDTH; //so the objects would travel distance of two screens
 }
 
 GameObject::~GameObject()
