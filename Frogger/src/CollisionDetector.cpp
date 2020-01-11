@@ -1,9 +1,5 @@
 #include "CollisionDetector.h"
 
-int EntityManager::cars_amt;
-int EntityManager::logs_amt;
-int EntityManager::tortoises_amt;
-
 bool CollisionDetector::check_collision(SDL_Rect a, SDL_Rect b)
 {
 	int left_a, left_b;
@@ -46,9 +42,9 @@ bool CollisionDetector::check_collision(SDL_Rect a, SDL_Rect b)
 
 bool CollisionDetector::check_collisions_car()
 {
-	for (int i = 0; i < EntityManager::cars_amt; i++)
+	for (int i = 0; i < EntityManager::get_cars_amt(); i++)
 	{
-		if (CollisionDetector::check_collision(EntityManager::player->get_dest_rect(), EntityManager::cars[i]->get_dest_rect()))
+		if (check_collision(EntityManager::player->get_dest_rect(), EntityManager::cars[i]->get_dest_rect()))
 		{
 			return true;
 		}
@@ -113,12 +109,12 @@ bool CollisionDetector::check_collisions_water()
 {
 	SDL_Rect temp;
 	
-	for (int i = 0; i < EntityManager::logs_amt; i++)
+	for (int i = 0; i < EntityManager::get_logs_amt(); i++)
 	{
 		temp = EntityManager::logs[i]->get_dest_rect();
 		temp.x = temp.x + (SCREEN_WIDTH / X_CHUNKS / 2); // so to make rect in the middle of log with 1/2 of 32x32 offset 
 		temp.w = temp.w - (SCREEN_WIDTH / X_CHUNKS);  // from width delete one 32x32
-		if (CollisionDetector::check_collision(EntityManager::player->get_dest_rect(), temp))
+		if (check_collision(EntityManager::player->get_dest_rect(), temp))
 		{
 			EntityManager::player->set_x(EntityManager::player->get_x() + EntityManager::logs[i]->get_delta());
 			EntityManager::player->set_is_above_water(true);
@@ -127,14 +123,14 @@ bool CollisionDetector::check_collisions_water()
 		}
 	}
 	
-	for (int i = 0; i < EntityManager::tortoises_amt; i++)
+	for (int i = 0; i < EntityManager::get_tortoises_amt(); i++)
 	{
 		if (EntityManager::tortoises[i]->is_visible())
 		{
 			temp = EntityManager::tortoises[i]->get_dest_rect();
 			temp.x = temp.x + (SCREEN_WIDTH / X_CHUNKS / 2); // so to make rect in the middle of log with 1/2 of 32x32 offset 
 			temp.w = temp.w - (SCREEN_WIDTH / X_CHUNKS);  // from width delete one 32x32
-			if (CollisionDetector::check_collision(EntityManager::player->get_dest_rect(), temp))
+			if (check_collision(EntityManager::player->get_dest_rect(), temp))
 			{
 				EntityManager::player->set_x(EntityManager::player->get_x() - EntityManager::tortoises[i]->get_delta());
 				EntityManager::player->set_is_above_water(true);

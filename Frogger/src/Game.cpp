@@ -292,7 +292,6 @@ void Game::handle_collisions()
 		EntityManager::player->attach_frog();
 	}
 
-
 	CollisionDetector::check_collisions_water();
 	
 	if (CollisionDetector::check_collisions_car()) fail();

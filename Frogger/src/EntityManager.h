@@ -18,6 +18,9 @@ public:
 	void update(double delta_ms, double time);
 	void render();
 	void destroy();
+	static int get_cars_amt();
+	static int get_logs_amt();
+	static int get_tortoises_amt();
 
 	static Player* player;
 	static GameObject** cars;
@@ -26,9 +29,6 @@ public:
 	static BonusFrog* bonus_frog;
 	static BonusBee* bonus_bee;
 	
-	static int cars_amt;
-	static int logs_amt;
-	static int tortoises_amt;
 
 	game_object* player_s;
 	game_object* cars_s;
@@ -49,5 +49,10 @@ private:
 	void load_cars();
 	void load_logs();
 	void load_tortoises();
+
+	
+	static int cars_amt_;
+	static int logs_amt_;
+	static int tortoises_amt_;
 };
 

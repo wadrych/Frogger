@@ -1,5 +1,9 @@
 #include "EntityManager.h"
 
+int EntityManager::cars_amt_;
+int EntityManager::logs_amt_;
+int EntityManager::tortoises_amt_;
+
 EntityManager::EntityManager()
 {
 }
@@ -37,16 +41,23 @@ void EntityManager::load()
 
 void EntityManager::load_cars()
 {
-	cars_amt = 14;
-	cars_s = (game_object*)malloc(cars_amt * sizeof(game_object));
+	cars_amt_ = 23;
+	cars_s = (game_object*)malloc(cars_amt_ * sizeof(game_object));
 	cars_s[0] = { SCREEN_WIDTH * 0, 11 * 32 + 16, 32, 32, "assets/car_1.png", -1.5 };
-	cars_s[1] = { SCREEN_WIDTH / 2, 11 * 32 + 16, 32, 32, "assets/car_1.png", -1.5 };
-	cars_s[2] = { SCREEN_WIDTH * 1, 11 * 32 + 16, 32, 32, "assets/car_1.png", -1.5 };
-	cars_s[3] = { SCREEN_WIDTH * 3 / 2, 11 * 32 + 16, 32, 32, "assets/car_1.png", -1.5 };
+	cars_s[1] = { SCREEN_WIDTH * 1 / 3, 11 * 32 + 16, 32, 32, "assets/car_1.png", -1.5 };
+	cars_s[2] = { SCREEN_WIDTH * 2 / 3, 11 * 32 + 16, 32, 32, "assets/car_1.png", -1.5 };
+	cars_s[3] = { SCREEN_WIDTH * 3 / 3, 11 * 32 + 16, 32, 32, "assets/car_1.png", -1.5 };
+	cars_s[14] = { SCREEN_WIDTH * 4 / 3, 11 * 32 + 16, 32, 32, "assets/car_1.png", -1.5 };
+	cars_s[15] = { SCREEN_WIDTH * 5 / 3, 11 * 32 + 16, 32, 32, "assets/car_1.png", -1.5 };
 
-	cars_s[5] = { SCREEN_WIDTH * 0, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
-	cars_s[6] = { SCREEN_WIDTH * 2 / 3, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
-	cars_s[7] = { SCREEN_WIDTH * 2 * 2 / 3, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
+	cars_s[5] = { SCREEN_WIDTH * 2 / 12, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
+	cars_s[6] = { SCREEN_WIDTH * 5 / 12, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
+	cars_s[7] = { SCREEN_WIDTH * 8 / 12, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
+	cars_s[16] = { SCREEN_WIDTH * 11 / 12, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
+	cars_s[17] = { SCREEN_WIDTH * 14 / 12, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
+	cars_s[18] = { SCREEN_WIDTH * 17 / 12, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
+	cars_s[19] = { SCREEN_WIDTH * 20 / 12, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
+	cars_s[20] = { SCREEN_WIDTH * 23 / 12, 10 * 32 + 16, 32, 32, "assets/car_4.png", 0.5 };
 
 	cars_s[8] = { SCREEN_WIDTH / 2, 9 * 32 + 16, 32, 32, "assets/car_2.png", -1 };
 	cars_s[9] = { SCREEN_WIDTH * 1, 9 * 32 + 16, 32, 32, "assets/car_2.png", -1 };
@@ -55,14 +66,16 @@ void EntityManager::load_cars()
 
 	cars_s[12] = { SCREEN_WIDTH * 1, 8 * 32 + 16, 32, 32, "assets/car_3.png", 8 };
 	
-	cars_s[13] = { SCREEN_WIDTH * 0, 7 * 32 + 16, 64, 32, "assets/car_5.png", -0.5 };
-	cars_s[4] = { SCREEN_WIDTH * 1, 7 * 32 + 16, 64, 32, "assets/car_5.png", -0.5 };
+	cars_s[13] = { SCREEN_WIDTH * 1 / 8, 7 * 32 + 16, 64, 32, "assets/car_5.png", -0.5 };
+	cars_s[21] = { SCREEN_WIDTH * 5 / 8, 7 * 32 + 16, 64, 32, "assets/car_5.png", -0.5 };
+	cars_s[4] = { SCREEN_WIDTH * 9 / 8, 7 * 32 + 16, 64, 32, "assets/car_5.png", -0.5 };
+	cars_s[22] = { SCREEN_WIDTH * 13 / 8, 7 * 32 + 16, 64, 32, "assets/car_5.png", -0.5 };
 }
 
 void EntityManager::load_logs()
 {
-	logs_amt = 15;
-	logs_s = (game_object*)malloc(logs_amt * sizeof(game_object));
+	logs_amt_ = 15;
+	logs_s = (game_object*)malloc(logs_amt_ * sizeof(game_object));
 	logs_s[0] = { SCREEN_WIDTH * 0, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
 	logs_s[1] = { SCREEN_WIDTH * 4 / 14, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
 	logs_s[2] = { SCREEN_WIDTH * 8 / 14, 32 * 4 + 16, 32 * 3,32,"assets/log_short.png", 0.5 };
@@ -85,8 +98,8 @@ void EntityManager::load_logs()
 
 void EntityManager::load_tortoises()
 {
-	tortoises_amt = 16;
-	tortoises_s = (game_object*)malloc(tortoises_amt * sizeof(game_object));
+	tortoises_amt_ = 16;
+	tortoises_s = (game_object*)malloc(tortoises_amt_ * sizeof(game_object));
 	tortoises_s[0] = { SCREEN_WIDTH * 0, 32 * 5 + 16, 32 * 3,32,"assets/tortoise_3.png", -1 };
 	tortoises_s[1] = { SCREEN_WIDTH * 4 / 14, 32 * 5 + 16, 32 * 3,32,"assets/tortoise_3.png", -1 };
 	tortoises_s[2] = { SCREEN_WIDTH * 8 / 14, 32 * 5 + 16, 32 * 3,32,"assets/tortoise_3.png", -1 };
@@ -119,9 +132,9 @@ void EntityManager::create()
 
 void EntityManager::create_cars()
 {
-	cars = (GameObject**)malloc(cars_amt * sizeof(GameObject*));
+	cars = (GameObject**)malloc(cars_amt_ * sizeof(GameObject*));
 
-	for (int i = 0; i < cars_amt; i++)
+	for (int i = 0; i < cars_amt_; i++)
 	{
 		cars[i] = new GameObject(&cars_s[i]);
 	}
@@ -129,9 +142,9 @@ void EntityManager::create_cars()
 
 void EntityManager::create_logs()
 {
-	logs = (GameObject**)malloc(logs_amt * sizeof(GameObject*));
+	logs = (GameObject**)malloc(logs_amt_ * sizeof(GameObject*));
 
-	for (int i = 0; i < logs_amt; i++)
+	for (int i = 0; i < logs_amt_; i++)
 	{
 		logs[i] = new GameObject(&logs_s[i]);
 	}
@@ -139,9 +152,9 @@ void EntityManager::create_logs()
 
 void EntityManager::create_tortoises()
 {
-	tortoises = (Tortoise**)malloc(tortoises_amt * sizeof(Tortoise*));
+	tortoises = (Tortoise**)malloc(tortoises_amt_ * sizeof(Tortoise*));
 
-	for (int i = 0; i < tortoises_amt; i++)
+	for (int i = 0; i < tortoises_amt_; i++)
 	{
 		tortoises[i] = new Tortoise(&tortoises_s[i]);
 	}
@@ -155,17 +168,17 @@ void EntityManager::update(double delta_ms, double time)
 
 	bonus_bee->update(delta_ms);
 
-	for (int i = 0; i < cars_amt; i++)
+	for (int i = 0; i < cars_amt_; i++)
 	{
 		cars[i]->update(time);
 	}
 
-	for (int i = 0; i < logs_amt; i++)
+	for (int i = 0; i < logs_amt_; i++)
 	{
 		logs[i]->update(time);
 	}
 
-	for (int i = 0; i < tortoises_amt; i++)
+	for (int i = 0; i < tortoises_amt_; i++)
 	{
 		tortoises[i]->update(delta_ms, time);
 	}
@@ -173,15 +186,15 @@ void EntityManager::update(double delta_ms, double time)
 
 void EntityManager::render()
 {
-	for (int i = 0; i < cars_amt; i++)
+	for (int i = 0; i < cars_amt_; i++)
 	{
 		cars[i]->render();
 	}
-	for (int i = 0; i < logs_amt; i++)
+	for (int i = 0; i < logs_amt_; i++)
 	{
 		logs[i]->render();
 	}
-	for (int i = 0; i < tortoises_amt; i++)
+	for (int i = 0; i < tortoises_amt_; i++)
 	{
 		tortoises[i]->render();
 	}
@@ -196,15 +209,15 @@ void EntityManager::destroy()
 	SDL_DestroyTexture(player->get_texture());
 	SDL_DestroyTexture(bonus_frog->get_texture());
 	SDL_DestroyTexture(bonus_bee->get_texture());
-	for (int i = 0; i < cars_amt; i++)
+	for (int i = 0; i < cars_amt_; i++)
 	{
 		SDL_DestroyTexture(cars[i]->get_texture());
 	}
-	for (int i = 0; i < logs_amt; i++)
+	for (int i = 0; i < logs_amt_; i++)
 	{
 		SDL_DestroyTexture(logs[i]->get_texture());
 	}
-	for (int i = 0; i < tortoises_amt; i++)
+	for (int i = 0; i < tortoises_amt_; i++)
 	{
 		SDL_DestroyTexture(tortoises[i]->get_texture());
 	}
@@ -212,15 +225,15 @@ void EntityManager::destroy()
 	delete player;
 	delete bonus_frog;
 	delete bonus_bee;
-	for (int i = 0; i < cars_amt; i++)
+	for (int i = 0; i < get_cars_amt(); i++)
 	{
 		delete cars[i];
 	}
-	for (int i = 0; i < logs_amt; i++)
+	for (int i = 0; i < get_logs_amt(); i++)
 	{
 		delete logs[i];
 	}
-	for (int i = 0; i < tortoises_amt; i++)
+	for (int i = 0; i < get_tortoises_amt(); i++)
 	{
 		delete tortoises[i];
 	}
@@ -248,3 +261,20 @@ void EntityManager::create_bonus_bee()
 {
 	bonus_bee = new BonusBee(bonus_bee_s);
 }
+
+int EntityManager::get_cars_amt()
+{
+	return cars_amt_;
+}
+
+int EntityManager::get_logs_amt()
+{
+	return logs_amt_;
+}
+
+int EntityManager::get_tortoises_amt()
+{
+	return tortoises_amt_;
+}
+
+
