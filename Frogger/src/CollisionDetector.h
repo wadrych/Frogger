@@ -11,5 +11,6 @@ public:
 	static bool check_collision_border();
 	static bool check_collisions_water();
 	static int check_collisions_spots();
+	static bool caught_bee();
 };
 

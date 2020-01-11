@@ -4,7 +4,7 @@ BonusFrog::BonusFrog(game_object* rect) : GameObject(rect)
 {
 	is_on_sth_ = true;
 	visible_ = false;
-	occurance_interval_ = rand() % 10;
+	occurrence_interval_ = rand() % 10;
 	to_display_ = false;
 }
 
@@ -18,7 +18,7 @@ void BonusFrog::update(double delta_ms)
 
 	if(!visible_)
 	{
-		if(delta_ >= occurance_interval_*1000)
+		if(delta_ >= occurrence_interval_*1000)
 		{
 			to_display_ = true;
 			delta_ = 0;

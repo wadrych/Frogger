@@ -2,27 +2,24 @@
 #include "GameObject.h"
 #include "stdlib.h"
 
-class BonusFrog :
-	public GameObject
+class BonusBee : public GameObject
 {
 public:
-	BonusFrog(game_object* rect);
-	~BonusFrog();
+	BonusBee(game_object* rect);
+	~BonusBee();
 
 	void update(double delta_ms);
 	bool is_visible();
 	void set_visible(const bool v);
 	void render();
-	void move_up();
-	void move_down();
-	void move_left();
-	void move_right();
-	
+	void reset();
+	void clean();
+	void take_spot(const int spot);
 private:
-	bool is_on_sth_;
 	bool visible_;
 	long long int delta_;
 	int occurrence_interval_;
-	bool to_display_;
+	int spot_number_;
+	int spots_[5];
 };
 

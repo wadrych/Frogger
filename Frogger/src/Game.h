@@ -19,7 +19,7 @@ public:
 	Game();
 	~Game();
 
-	void init(const char* title, int x_pos, int y_pos, bool fullscreen);
+	void init(const char* title, int x_pos, int y_pos);
 
 	void handle_events();
 	void update();
@@ -58,17 +58,17 @@ private:
 	option current_;
 
 
-	bool sdl_initialization(const char* title, const int x_pos, const int y_pos, const bool fullscreen);
+	bool sdl_initialization(const char* title, const int x_pos, const int y_pos);
 	void fps_counter();
 	void calculate_time();
 	void set_renderer_conf();
 	void create_gui();
 	void create_map();
 	void fail();
-	void success();
+	void success(int spot);
 	void handle_score();
 	bool check_if_won();
-	void check_collisions();
+	void handle_collisions();
 	void render_spots();
 	void check_time();
 };

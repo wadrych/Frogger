@@ -5,6 +5,7 @@
 #include  "Player.h"
 #include  "Tortoise.h"
 #include "BonusFrog.h"
+#include "BonusBee.h"
 
 class EntitiyManager
 {
@@ -23,6 +24,7 @@ public:
 	static GameObject** logs;
 	static Tortoise** tortoises;
 	static BonusFrog* bonus_frog;
+	static BonusBee* bonus_bee;
 	
 	static int cars_amt;
 	static int logs_amt;
@@ -33,6 +35,7 @@ public:
 	game_object* logs_s;
 	game_object* tortoises_s;
 	game_object* bonus_frog_s;
+	game_object* bonus_bee_s;
 	
 private:
 	void create_cars();
@@ -42,5 +45,6 @@ private:
 	void load();
 	void create();
 	void create_bonus_frog();
+	void create_bonus_bee();
 };
 

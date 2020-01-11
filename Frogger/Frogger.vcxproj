@@ -138,6 +138,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\BonusBee.cpp" />
     <ClCompile Include="src\BonusFrog.cpp" />
     <ClCompile Include="src\CollisionDetector.cpp" />
     <ClCompile Include="src\EntitiyManager.cpp" />
@@ -153,6 +154,7 @@
     <ClCompile Include="src\UserInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\BonusBee.h" />
     <ClInclude Include="src\BonusFrog.h" />
     <ClInclude Include="src\CollisionDetector.h" />
     <ClInclude Include="src\EntitiyManager.h" />

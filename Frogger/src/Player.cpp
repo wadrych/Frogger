@@ -48,7 +48,7 @@ void Player::set_is_above_water(bool n)
 void Player::lost()
 {
 	health_--;
-	lose_bonus();
+	lose_frog();
 
 	if(health_ < 1)
 	{
@@ -71,22 +71,22 @@ void Player::init()
 	health_ = 3;
 	is_on_sth_ = false;
 	is_alive_ = true;
-	has_bonus_ = false;
+	has_frog_ = false;
 }
 
-void Player::attach_bonus()
+void Player::attach_frog()
 {
-	has_bonus_ = true;
+	has_frog_ = true;
 }
 
-void Player::lose_bonus()
+void Player::lose_frog()
 {
-	has_bonus_ = false;
+	has_frog_ = false;
 }
 
-bool Player::has_bonus()
+bool Player::has_frog()
 {
-	return has_bonus_;
+	return has_frog_;
 }
 
 void Player::reset_pos()

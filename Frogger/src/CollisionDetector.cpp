@@ -1,6 +1,5 @@
 #include "CollisionDetector.h"
 
-
 int EntitiyManager::cars_amt;
 int EntitiyManager::logs_amt;
 int EntitiyManager::tortoises_amt;
@@ -177,3 +176,7 @@ int CollisionDetector::check_collisions_spots()
 	return -1;
 }
 
+bool CollisionDetector::caught_bee()
+{
+	return check_collision(EntitiyManager::player->get_dest_rect(), EntitiyManager::bonus_bee->get_dest_rect());
+}
